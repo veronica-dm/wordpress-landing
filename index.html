@@ -1,0 +1,1610 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Разработка сайтов на WordPress — система для заявок и продаж</title>
+<meta name="description" content="Создаём сайты на WordPress и связываем их с рекламой, CRM и аналитикой. Не просто сайт — система для заявок и продаж.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Токены дизайн-системы (см. DESIGN.md) ===== */
+:root{
+  --red:#cf040e;--red-2:#da0812;--red-hover:#ff020e;
+  --ink:#151515;--black:#121212;--deep:#0d0d0d;
+  --canvas:#f7f7f7;--grey:#efefef;--grey-2:#d8d8d8;--line:#d8d8d8;
+  --muted:#797979;--white:#fff;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gap:160px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--canvas);color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+ul{list-style:none}
+em{font-style:normal}
+.wrap{padding:0 40px}
+
+/* Иконки: inline SVG, цвет берётся из currentColor */
+.mi{display:inline-block;flex:none;line-height:0}
+.mi svg{width:100%;height:100%;display:block;fill:currentColor}
+.i-arrow{width:20px;height:20px}
+
+/* ===== Скроллбар (как модификатор T1084) ===== */
+::-webkit-scrollbar{width:15px;height:15px;background-color:#151515}
+::-webkit-scrollbar-track{background-color:#151515}
+::-webkit-scrollbar-thumb{background-color:#cf040e;border-radius:0;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:#ff020e}
+@supports (-moz-appearance:none){:root,body{scrollbar-width:auto;scrollbar-color:#cf040e #151515}}
+
+/* ===== Анимация загрузки страницы (как T360) ===== */
+.page{opacity:0;transition:opacity .5s ease-in-out}
+.page.page-on{opacity:1}
+.t360__progress{position:fixed;top:0;right:0;left:0;z-index:9999}
+.t360__bar{width:0;height:2px;background:#cf040e;transition:all .3s ease-in-out}
+.t360__barprogress{width:70%}
+.t360__barprogressfinished{width:100%}
+.t360__barprogresshidden{opacity:0;width:100%}
+
+/* ===== Типографика ===== */
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:-.2px;text-transform:uppercase;color:var(--red)}
+.eyebrow::before{content:"";width:10px;height:10px;background:var(--red)}
+h1{font-size:52px;font-weight:600;line-height:1;letter-spacing:-3px}
+h2{font-size:50px;font-weight:600;line-height:1;letter-spacing:-3px;margin-top:16px}
+h3{font-size:25px;font-weight:600;line-height:1.1;letter-spacing:-.5px}
+.descr{color:var(--muted);font-size:16px;line-height:1.5}
+.head{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;margin-bottom:64px}
+/* как в Tilda: надпись над заголовком — отдельной строкой, описание по центру заголовка, на всю правую колонку */
+.head{grid-template-rows:auto auto;row-gap:20px}
+.head > div{display:contents}
+.head > div > .eyebrow{grid-column:1;grid-row:1}
+.head > div > h2{grid-column:1;grid-row:2;margin-top:0}
+.head > .descr{grid-column:2;grid-row:2;align-self:center}
+.head h2{max-width:780px;padding-right:40px}
+section{position:relative}
+.sec{padding:calc(var(--gap) / 2) 0}
+.sec.flow,.promo{margin:calc(var(--gap) / 2) 0}
+.hero{margin-bottom:calc(var(--gap) / 2)}
+#services{padding-bottom:0}
+#services + .sec{padding-top:var(--gap)}
+
+/* Текст проявляется словами при прокрутке */
+.rv .w{opacity:.16;transition:opacity .3s,color .3s}
+.rv .w.on{opacity:1}
+.rv .w.acc.on{color:var(--red)}
+
+/* ===== Кнопки ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 20px;font-family:inherit;font-size:17px;font-weight:600;letter-spacing:-1px;line-height:1.55;border:0;cursor:pointer;transition:background-color .2s ease-out,color .2s}
+.btn .mi{transition:transform .2s ease-out}
+.btn:hover .mi{transform:translateX(3px)}
+.btn-red{background:var(--red);color:var(--grey)}
+.btn-red:hover{background:var(--red-hover)}
+.btn-light{background:var(--grey);color:var(--ink)}
+.btn-light:hover{background:#fff}
+
+/* ===== Меню ===== */
+/* как в Tilda: в начале страницы шапка уезжает вместе с первым экраном, после 700px сверху выезжает фиксированная */
+nav{position:absolute;z-index:60;top:0;left:0;right:0}
+@keyframes navIn{from{transform:translateY(-110%)}to{transform:none}}
+nav .bar{padding:0 40px}
+nav .in{display:flex;align-items:center;justify-content:space-between;height:68px;color:#fff;transition:background .4s,color .4s,padding .4s var(--ease)}
+.logo{font-size:25px;font-weight:600;letter-spacing:-2px;white-space:nowrap}
+nav ul{display:flex;gap:64px;font-size:17px;font-weight:500;letter-spacing:-.5px}
+nav ul a{position:relative;display:inline-block}
+.nav-ar{position:absolute;left:100%;top:50%;width:18px;height:18px;margin:-9px 0 0 6px;opacity:0;transform:translateX(-8px);transition:opacity .25s,transform .35s var(--ease)}
+nav ul a:hover .nav-ar{opacity:1;transform:none}
+nav .btn{padding:11px 20px}
+nav .btn-swap{background:var(--grey);color:var(--ink)}
+nav:not(.scrolled) .btn-swap:hover{background:var(--ink);color:var(--grey)}
+nav.scrolled{position:fixed;top:5px;animation:navIn .15s ease-out}
+nav.scrolled .in{background:#efefefe6;backdrop-filter:blur(10px);color:var(--ink);padding:0 30px}
+nav.scrolled .btn-swap{background:var(--red);color:var(--grey)}
+nav.scrolled .btn-swap:hover{background:var(--red-hover)}
+.burger{display:none;align-items:center;gap:8px;background:var(--grey);color:var(--ink);border:0;cursor:pointer;padding:9px 16px;font:inherit;font-size:16px;font-weight:600;letter-spacing:-.5px}
+.burger .mi{width:22px;height:22px}
+
+.mmenu{position:fixed;inset:0;z-index:70;visibility:hidden;pointer-events:none;transition:visibility 0s .3s}
+.mmenu.open{visibility:visible;pointer-events:auto;transition:none}
+.mm-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .3s}
+.mmenu.open .mm-bg{opacity:1}
+.mm-panel{position:absolute;top:0;right:0;bottom:0;width:300px;max-width:100%;background:#fff;padding:16px 20px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.76,0,.24,1)}
+.mmenu.open .mm-panel{transform:none}
+.mm-top{display:flex;justify-content:space-between;align-items:flex-start}
+.mm-logo{font-size:18px;letter-spacing:-1px;line-height:1;color:#151515;max-width:170px}
+.mm-close{background:none;border:0;padding:0;cursor:pointer;width:30px;height:30px}
+.mm-nav{margin:auto 0;transform:translateY(12px);display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+.mm-nav a{font-size:16px;line-height:1.4;color:#151515;border-bottom:1px solid #151515;transition:color .25s,border-color .25s}
+.mm-nav a:hover{color:var(--red);border-color:var(--red)}
+.mm-foot{display:flex;flex-direction:column;align-items:flex-end}
+.mm-soc{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.mm-soc a{position:relative;width:55px;height:54px}
+.mm-soc img{position:absolute;inset:0;width:100%;height:100%}
+.mm-soc img.hv{opacity:0;transition:opacity .2s}.mm-soc a:hover img.hv{opacity:1}
+.mm-mail{font-size:16px;color:#121212;text-decoration:underline}
+.mm-hours{font-size:14px;color:#949494;margin-top:6px}
+
+/* ===== Появление при прокрутке ===== */
+.fu{opacity:0;transform:translateY(60px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.zi{opacity:0;transform:scale(.9);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.fu.in,.zi.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ===== 1. Первый экран ===== */
+.hero{min-height:100vh;min-height:100svh;background:#0d0d0d url(assets/img/hero-bg.png) center/cover no-repeat;color:#fff;display:flex;flex-direction:column;padding:120px 0 40px;overflow:hidden}
+.hero .wrap{position:relative;z-index:1;width:100%;flex:1;display:flex;flex-direction:column}
+.hero-grid{margin:auto 0}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.hero h1{max-width:620px}
+.hero p{font-size:20px;font-weight:500;letter-spacing:-.5px;line-height:1.5;margin:28px 0 44px;max-width:620px;color:#efefef}
+.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero .btn-light:hover{background:var(--red);color:var(--grey)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shot{background:#ffffff4d;padding:10px}
+.shot img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top left}
+.hero-tags{display:flex;flex-wrap:wrap;gap:12px 40px;margin-top:60px;font-size:20px;font-weight:600;letter-spacing:-1px}
+.hero-tags li{display:flex;align-items:center;gap:10px}
+.hero-tags li::before{content:"";width:5px;height:5px;background:#fff}
+
+/* ===== 2. Как бывает / Как работаем ===== */
+.compare{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,auto);column-gap:20px}
+/* subgrid: заголовок и 4 пункта левой и правой колонки делят общие строки — высоты совпадают */
+.col{padding:30px 30px 10px;grid-row:span 5;display:grid;grid-template-rows:subgrid}
+.col.dark{background:var(--ink);color:var(--grey)}
+.col.light{background:var(--grey-2)}
+.col > h3{font-size:40px;letter-spacing:-3px;line-height:1;padding:0 0 38px;border-bottom:1px solid #ffffff2e}
+.col.light > h3{border-color:#0000001f}
+.row{position:relative;padding:20px 0 40px;border-bottom:1px solid #ffffff2e;min-height:147px}
+.col.light .row{border-color:#0000001f}
+.row:last-child{border:0}
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:-.3px;padding:6px 10px;background:var(--grey);color:var(--ink)}
+.tag.red{background:var(--red);color:#fff}
+.tag.blk{background:var(--ink);color:#fff}
+.row h4{font-size:25px;font-weight:600;letter-spacing:-.5px;line-height:1.1;margin-top:18px}
+.col.light .row h4{font-size:20px}
+.info{position:absolute;right:170px;top:20px;width:25px;height:25px;border-radius:50%;background:var(--red);color:#fff;font-size:15px;font-weight:500;border:0;cursor:pointer;display:grid;place-items:center;z-index:6;font-family:inherit}
+.info:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.tip{position:absolute;right:130px;bottom:calc(100% - 14px);width:200px;background:#f2f2f2;color:var(--ink);font-size:14px;line-height:1.4;padding:14px;box-shadow:0 0 10px #0000002e;z-index:8;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.row.tip-on .tip{opacity:1;pointer-events:auto;transform:none}
+.pop{position:absolute;right:-5px;top:12px;width:160px;pointer-events:none;opacity:0;transform:rotate(4deg) scale(.92);transition:opacity .35s var(--ease),transform .45s var(--ease);z-index:5;box-shadow:0 10px 25px #0003}
+.row.hov .pop{opacity:1;transform:rotate(4deg)}
+
+/* ===== 3. Цифры ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #b5b5b5;padding-top:86px}
+.stat{text-align:center;border-right:1px solid var(--line);padding:0 10px 4px}
+.stat:last-child{border:0}
+.stat b{display:block;font-size:72px;font-weight:500;letter-spacing:-3.5px;line-height:1;white-space:nowrap}
+.stat > span{display:block;color:var(--muted);font-size:16px;margin-top:28px;line-height:1.5}
+
+/* ===== 4. Акция ===== */
+.promo{background-color:#0d0d0d;padding:80px 24px;text-align:center;position:relative;overflow:hidden}
+.promo::before,.promo::after{content:'';position:absolute;inset:0;pointer-events:none}
+.promo::before{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 600' preserveAspectRatio='xMidYMid slice'%3E%3Cpath d='M-100 420 Q200 200 500 350 Q800 500 1100 280 Q1300 160 1600 320' stroke='%23cf040e' stroke-width='1.2' fill='none' opacity='0.12'/%3E%3Cpath d='M-100 380 Q250 150 550 320 Q850 490 1150 250 Q1350 120 1600 280' stroke='%23cf040e' stroke-width='0.7' fill='none' opacity='0.08'/%3E%3Cpath d='M-100 460 Q180 260 480 390 Q780 520 1080 310 Q1280 190 1600 360' stroke='%23cf040e' stroke-width='0.5' fill='none' opacity='0.06'/%3E%3Cpath d='M-100 200 Q300 480 650 300 Q950 140 1200 400 Q1380 520 1600 350' stroke='%23cf040e' stroke-width='1.4' fill='none' opacity='0.1'/%3E%3Cpath d='M-100 160 Q320 450 670 260 Q970 100 1220 370 Q1400 500 1600 310' stroke='%23cf040e' stroke-width='0.6' fill='none' opacity='0.07'/%3E%3Cpath d='M-100 500 Q200 320 520 440 Q820 560 1100 360 Q1300 240 1600 420' stroke='%23a00008' stroke-width='1' fill='none' opacity='0.09'/%3E%3Cpath d='M-100 100 Q400 500 750 280 Q1000 120 1250 450 Q1420 570 1600 400' stroke='%23cf040e' stroke-width='1.8' fill='none' opacity='0.08'/%3E%3C/svg%3E");background-size:cover;background-position:center;animation:promo-pulse 6s ease-in-out infinite alternate}
+.promo::after{background:radial-gradient(ellipse 100% 100% at 120% 10%,rgba(207,4,14,.25) 0%,transparent 70%),radial-gradient(ellipse 100% 100% at -20% 90%,rgba(170,10,15,.20) 0%,transparent 70%),linear-gradient(135deg,rgba(100,0,5,.15) 0%,transparent 40%),linear-gradient(45deg,transparent 60%,rgba(120,5,10,.12) 100%);animation:promo-glow 5s ease-in-out infinite alternate-reverse}
+@keyframes promo-pulse{from{opacity:.7;transform:scale(1) translateX(0)}to{opacity:1;transform:scale(1.03) translateX(-12px)}}
+@keyframes promo-glow{from{opacity:.7}to{opacity:1}}
+.promo__inner{position:relative;max-width:840px;margin:0 auto;display:flex;flex-direction:column;align-items:center;z-index:1}
+.promo__badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.18em;color:#cf040e;border:1.5px solid #cf040e;padding:4px 14px;text-transform:uppercase;margin-bottom:28px}
+.promo__title{color:#efefef;font-size:50px;font-weight:600;line-height:1;letter-spacing:-.01em;text-wrap:balance;margin:0 0 20px}
+.promo__sub{color:rgba(255,255,255,.65);font-size:16px;margin:0 0 44px;line-height:1.5}
+.promo__timer{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.promo__timer-unit{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);padding:18px 28px 14px;min-width:110px}
+.promo__timer-num{font-size:72px;font-weight:700;line-height:1;color:#fff;letter-spacing:-.03em;transition:transform .15s cubic-bezier(.22,1,.36,1),opacity .15s}
+.promo__timer-num--flip{transform:translateY(-6px) scale(.94);opacity:0}
+.promo__timer-label{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.promo__timer-sep{font-size:60px;font-weight:700;color:#cf040e;line-height:1;margin-bottom:18px;animation:promo-blink 1s step-end infinite}
+@keyframes promo-blink{0%,100%{opacity:1}50%{opacity:.3}}
+.promo__progress-wrap{width:100%;max-width:300px;height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-bottom:48px}
+.promo__progress-bar{height:100%;width:100%;background:#cf040e;transform-origin:left;transition:transform 1s linear;border-radius:2px}
+.promo .btn{transition:background-color .22s var(--ease),transform .22s var(--ease)}
+.promo .btn:hover{transform:translateY(-2px)}
+
+/* ===== 5. Разработка под задачу ===== */
+/* две строки: заголовок, затем кнопка + линия с текстом — линия всегда сразу под заголовком */
+.types-head{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;column-gap:20px;row-gap:24px}
+.types-head .left{display:contents}
+.types-head .left > div:first-child{grid-column:1;grid-row:1}
+.types-head .left > div:last-child{grid-column:1;grid-row:2;align-self:end}
+.types-right{grid-column:2;grid-row:2;border-top:1px solid #c7c7c7;padding-top:28px;display:grid;grid-template-columns:1fr 154px 145px;column-gap:0;row-gap:20px}
+.types-right .descr{margin-right:45px}
+.types-right .descr{color:var(--ink)}
+.types-right ul li{margin-bottom:12px}
+.types-right ul a{border-bottom:1px solid var(--ink);line-height:1.3;transition:color .25s,border-color .25s}
+.types-right ul a:hover{color:var(--red);border-color:var(--red)}
+.show{position:relative;height:340vh;margin-top:80px}
+.show-stage{position:sticky;top:0;height:100vh;padding:90px 40px 30px;display:grid;grid-template-columns:300px 1fr;gap:20px}
+.show-side{display:flex;flex-direction:column;justify-content:center}
+.show-count{font-size:14px;font-weight:600;letter-spacing:.1em;color:var(--muted);font-variant-numeric:tabular-nums}
+.show-count b{color:var(--red)}
+.show-cat{position:relative;height:72px;margin-top:18px;overflow:hidden}
+.show-cat span{position:absolute;inset:0;font-size:30px;font-weight:600;letter-spacing:-1.5px;line-height:1.05;transform:translateY(110%);transition:transform .6s var(--ease)}
+.show-cat span.on{transform:none}
+.show-cat span.out{transform:translateY(-110%)}
+.show-text{color:var(--muted);font-size:15px;margin-top:10px;max-width:280px}
+.show-prog{display:flex;gap:4px;margin-top:32px}
+.show-prog i{width:22px;height:22px;background:var(--grey-2);transition:background .4s}
+.show-prog i.on{background:var(--red)}
+.show-nav{display:none;gap:8px;margin-top:20px}
+.show-nav button{width:44px;height:44px;border:0;background:var(--red);color:#fff;font-size:18px;cursor:pointer;transition:background .25s}
+.show-nav button:hover{background:var(--red-hover)}
+.show-scene{touch-action:pan-y}
+.show-steps{display:flex;flex-direction:column;gap:10px;margin-top:32px;font-size:14px;font-weight:500;color:#a3a3a3}
+.show-steps span{display:flex;align-items:center;gap:10px}
+.show-steps span::before{content:"";width:6px;height:6px;background:currentColor}
+.show-steps span.on{color:var(--ink)}.show-steps span.on::before{background:var(--red)}
+/* сцена: тёмный «стол» с фирменными волнами, ноутбук и дизайн-артефакты */
+.show-scene{position:relative;background:#0d0d0d url(assets/img/hero-bg.png) center/cover;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:0}
+.show-scene::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 50% 55%,transparent,#0d0d0dcc);pointer-events:none}
+.laptop{position:relative;z-index:2;width:min(68%,820px)}
+.lp-screen{position:relative;aspect-ratio:16/10;background:#050505;border:10px solid #1b1b1b;border-bottom-width:16px;border-radius:14px 14px 0 0;box-shadow:0 0 0 1px #333,0 40px 80px -20px #000}
+.lp-screen::before{content:"";position:absolute;top:-7px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#333}
+.lp-view{position:absolute;inset:0;overflow:hidden;background:#111}
+.lp-view{container-type:inline-size}
+.ds{position:absolute;inset:0;overflow:hidden;clip-path:inset(100% 0 0 0);transform:scale(1.06);transition:clip-path .9s var(--ease),transform 1.2s var(--ease);font-family:Inter,-apple-system,Arial,sans-serif;line-height:1.15;letter-spacing:0;-webkit-font-smoothing:antialiased}
+.ds.on{clip-path:inset(0 0 0 0);transform:none}
+.ds.under{clip-path:inset(0 0 0 0);transform:none;transition:none}
+.ds *{box-sizing:border-box;font-style:normal}
+.ds svg{display:block}
+
+/* ===== 1 · Стоматология — Apple (светлая страница, фото) ===== */
+.mk-a{background:#fff;color:#1d1d1f;display:flex;flex-direction:column}
+.mk-a-n{height:3.8cqw;display:flex;align-items:center;justify-content:space-between;padding:0 5cqw;background:#fbfbfdcc;border-bottom:1px solid #0000000f;font-size:.95cqw;color:#424245}
+.mk-a-n b{font-size:1.45cqw;font-weight:600;color:#1d1d1f}
+.mk-a-nav{display:flex;gap:2.6cqw}
+.mk-a-n em{background:#0071e3;color:#fff;border-radius:2cqw;padding:.4cqw 1.1cqw}
+.mk-a-h{display:grid;grid-template-columns:1fr 1.05fr;align-items:stretch;flex:1;min-height:0;background:#f5f5f7}
+.mk-a-tx{padding:4cqw 3cqw 3cqw 5cqw;display:flex;flex-direction:column;justify-content:center}
+.mk-a-ey{font-size:1.25cqw;font-weight:600;color:#bf4800}
+.mk-a-tx h6{font-size:5cqw;font-weight:600;letter-spacing:-.22cqw;line-height:1.02;margin-top:.6cqw}
+.mk-a-tx p{font-size:1.35cqw;color:#6e6e73;margin-top:1.2cqw;line-height:1.45;max-width:32cqw}
+.mk-a-cta{display:flex;gap:2cqw;align-items:center;margin-top:1.8cqw;font-size:1.15cqw}
+.mk-a-cta em{background:#0071e3;color:#fff;border-radius:3cqw;padding:.75cqw 1.7cqw}
+.mk-a-cta span{color:#0066cc}
+.mk-a-ph{position:relative;overflow:hidden}
+.mk-a-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% 30%}
+.mk-a-chip{position:absolute;background:#ffffffd9;backdrop-filter:blur(12px);border-radius:1.2cqw;padding:.9cqw 1.2cqw;font-size:.95cqw;color:#6e6e73;box-shadow:0 .8cqw 2.4cqw #0000001f}
+.mk-a-chip b{display:block;font-size:1.6cqw;font-weight:600;color:#1d1d1f;letter-spacing:-.05cqw}
+.mk-a-c1{left:2cqw;bottom:2.4cqw}.mk-a-c2{right:2cqw;top:2.4cqw}
+.mk-a-t{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:.8cqw;padding:.8cqw}
+.mk-a-t>div{border-radius:1.4cqw;padding:1.6cqw;background:#f5f5f7;position:relative;overflow:hidden;min-height:9cqw}
+.mk-a-t small{font-size:.95cqw;color:#86868b}.mk-a-t b{display:block;font-size:1.9cqw;font-weight:600;letter-spacing:-.06cqw;margin-top:.3cqw}
+.mk-a-t span{display:block;font-size:1cqw;color:#0066cc;margin-top:.8cqw}
+.mk-a-t .k{background:#000;color:#f5f5f7}.mk-a-t .k span{color:#2997ff}
+.mk-a-t .k img{position:absolute;right:0;top:0;width:55%;height:100%;object-fit:cover;opacity:.85;-webkit-mask:linear-gradient(90deg,#0000,#000 50%);mask:linear-gradient(90deg,#0000,#000 50%)}
+
+/* ===== 2 · Ремонт квартир — Airbnb (фото на весь экран) ===== */
+.mk-b{background:#111;color:#fff;display:flex;flex-direction:column}
+.mk-b-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mk-b::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b0907e6 0%,#0b0907a6 38%,#0b090700 70%),linear-gradient(#0000 60%,#0b0907cc)}
+.mk-b > :not(.mk-b-bg){position:relative;z-index:1}
+.mk-b-n{display:flex;justify-content:space-between;align-items:center;padding:1.8cqw 4cqw}
+.mk-b-logo{display:flex;align-items:center;gap:.6cqw;color:#fff;font-weight:700;font-size:1.7cqw;letter-spacing:-.05cqw}
+.mk-b-logo i{width:1.9cqw;height:1.9cqw;background:#ff385c;clip-path:polygon(50% 0,100% 45%,85% 45%,85% 100%,15% 100%,15% 45%,0 45%)}
+.mk-b-nav{display:flex;gap:2.4cqw;font-size:1.1cqw;color:#ffffffd9}
+.mk-b-n em{background:#fff;color:#222;border-radius:3cqw;padding:.7cqw 1.4cqw;font-size:1.05cqw;font-weight:600}
+.mk-b-h{padding:2.6cqw 4cqw 0;max-width:46cqw}
+.mk-b-tag{display:inline-flex;gap:.6cqw;align-items:center;background:#ffffff26;backdrop-filter:blur(8px);border-radius:3cqw;padding:.45cqw 1cqw;font-size:1cqw;font-weight:600}
+.mk-b-tag i{color:#ff385c}
+.mk-b-h h6{font-size:4.6cqw;font-weight:600;letter-spacing:-.2cqw;line-height:1.02;margin-top:1.3cqw}
+.mk-b-h p{font-size:1.3cqw;color:#ffffffcc;margin-top:1.1cqw;line-height:1.45;max-width:34cqw}
+.mk-b-calc{position:absolute!important;left:4cqw;bottom:3cqw;width:40cqw;background:#ffffffeb;backdrop-filter:blur(14px);color:#222;border-radius:1.6cqw;padding:1.6cqw;box-shadow:0 1.6cqw 4cqw -1cqw #0007}
+.mk-b-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1cqw}
+.mk-b-row div{border:1px solid #e6dfd6;border-radius:1cqw;padding:.8cqw 1cqw;font-size:.95cqw;color:#6a6a6a}
+.mk-b-row b{display:block;color:#222;font-size:1.2cqw;margin-top:.2cqw}
+.mk-b-tot{display:flex;justify-content:space-between;align-items:center;margin-top:1.2cqw}
+.mk-b-tot span{font-size:.95cqw;color:#6a6a6a}
+.mk-b-tot b{display:block;font-size:2.2cqw;font-weight:600;letter-spacing:-.08cqw}
+.mk-b-tot em{background:#ff385c;color:#fff;border-radius:.9cqw;padding:1cqw 1.6cqw;font-size:1.1cqw;font-weight:600}
+.mk-b-pr{position:absolute!important;right:4cqw;bottom:3cqw;display:flex;gap:1cqw}
+.mk-b-pr div{width:12cqw;background:#fff;color:#222;border-radius:1.2cqw;padding:.6cqw;box-shadow:0 1cqw 2.4cqw -1cqw #0008;font-size:.9cqw}
+.mk-b-pr img{width:100%;aspect-ratio:1.2;object-fit:cover;border-radius:.8cqw;display:block}
+.mk-b-pr b{display:block;font-size:1cqw;margin:.6cqw .3cqw 0}
+.mk-b-pr span{display:block;color:#6a6a6a;margin:0 .3cqw .2cqw}
+
+/* ===== 3 · Юридическая компания — дизайн-система Linear ===== */
+.mk-c{background:#08090a;color:#f7f8f8;display:flex;flex-direction:column}
+.mk-c-n{display:flex;align-items:center;justify-content:space-between;padding:1.6cqw 4cqw;border-bottom:1px solid #23252a;font-size:1.05cqw;color:#8a8f98}
+.mk-c-n b{display:flex;align-items:center;gap:.7cqw;color:#f7f8f8;font-size:1.35cqw;font-weight:600}
+.mk-c-n b i{width:1.7cqw;height:1.7cqw;border-radius:.4cqw;background:linear-gradient(135deg,#c9a46a,#6b5330)}
+.mk-c-nav{display:flex;gap:2.4cqw}
+.mk-c-r{display:flex;gap:1.2cqw;align-items:center}.mk-c-r em{background:#f7f8f8;color:#08090a;border-radius:.6cqw;padding:.55cqw 1.1cqw;font-weight:500}
+.mk-c-h{padding:3.2cqw 4cqw 0;position:relative}
+.mk-c-h::before{content:"";position:absolute;left:28%;top:-8cqw;width:60cqw;height:30cqw;background:radial-gradient(closest-side,#c9a46a33,transparent);pointer-events:none}
+.mk-c-pill{display:inline-flex;gap:.7cqw;align-items:center;font-size:1cqw;color:#8a8f98;border:1px solid #23252a;background:#0f1011;border-radius:3cqw;padding:.45cqw 1.1cqw;position:relative}
+.mk-c-pill b{color:#e8cf9f;font-weight:500}
+.mk-c-h h6{position:relative;font-size:4.7cqw;font-weight:600;letter-spacing:-.2cqw;line-height:1.03;margin-top:1.5cqw;max-width:60cqw;background:linear-gradient(180deg,#fff 40%,#ffffff8c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mk-c-h p{position:relative;font-size:1.4cqw;color:#8a8f98;margin-top:1.3cqw;max-width:46cqw;line-height:1.5}
+.mk-c-b{position:relative;display:flex;gap:1cqw;margin-top:1.8cqw;font-size:1.15cqw}
+.mk-c-b em{background:#e8cf9f;color:#08090a;border-radius:.6cqw;padding:.9cqw 1.6cqw;font-weight:500}
+.mk-c-b span{border:1px solid #23252a;border-radius:.6cqw;padding:.9cqw 1.6cqw;color:#d0d6e0}
+.mk-c-app{position:relative;margin:2.4cqw 4cqw 0;flex:1;border:1px solid #23252a;border-bottom:0;border-radius:1cqw 1cqw 0 0;background:linear-gradient(#141516,#0f1011);display:grid;grid-template-columns:13cqw 1fr 21cqw;overflow:hidden;box-shadow:0 -1cqw 4cqw #c9a46a14}
+.mk-c-sb{border-right:1px solid #23252a;padding:1.4cqw 1.2cqw;font-size:1cqw;color:#8a8f98;display:flex;flex-direction:column;gap:.75cqw}
+.mk-c-sb b{color:#f7f8f8;font-weight:500;background:#ffffff0d;border-radius:.4cqw;padding:.3cqw .6cqw;margin:0 -.6cqw}
+.mk-c-sb small{font-size:.85cqw;color:#62666d;margin-top:.6cqw;letter-spacing:.08cqw}
+.mk-c-l{padding:1cqw 1.6cqw;font-size:1.05cqw}
+.mk-c-l .hd{display:flex;justify-content:space-between;color:#8a8f98;padding:.5cqw 0 .9cqw;border-bottom:1px solid #23252a;font-size:1cqw}
+.mk-c-row{display:grid;grid-template-columns:5.4cqw 1.4cqw 1fr auto 2.2cqw;align-items:center;gap:.9cqw;padding:.85cqw 0;border-bottom:1px solid #18191a;color:#d0d6e0}
+.mk-c-row small{color:#62666d;font-size:.95cqw}
+.mk-c-row i{width:1.2cqw;height:1.2cqw;border-radius:50%;border:.16cqw solid #8a8f98}
+.mk-c-row i.p{border-color:#f2c94c;background:conic-gradient(#f2c94c 0 60%,#0000 0)}
+.mk-c-row i.d{border-color:#4cb782;background:#4cb782}
+.mk-c-row em{font-size:.9cqw;border:1px solid #23252a;border-radius:2cqw;padding:.15cqw .7cqw;color:#8a8f98}
+.mk-c-ch{border-left:1px solid #23252a;padding:1.2cqw 1.4cqw;display:flex;flex-direction:column;gap:1.2cqw;font-size:.9cqw;color:#8a8f98}
+.mk-c-kpi{display:flex;align-items:center;gap:1.2cqw}
+.mk-c-kpi svg{width:5.4cqw;height:5.4cqw;flex:none}
+.mk-c-kpi b{display:block;font-size:2cqw;font-weight:600;color:#f7f8f8;letter-spacing:-.06cqw}
+.mk-c-bars{display:flex;align-items:flex-end;gap:.6cqw;height:7cqw;border-bottom:1px solid #23252a;padding-bottom:.2cqw}
+.mk-c-bars i{flex:1;border-radius:.3cqw .3cqw 0 0;background:linear-gradient(#e8cf9f,#8a6a3a)}
+.mk-c-bars i:last-child{background:linear-gradient(#fff2d6,#c9a46a);box-shadow:0 0 1cqw #c9a46a66}
+.mk-c-mo{display:flex;justify-content:space-between;font-size:.8cqw;color:#62666d;margin-top:-.6cqw}
+.mk-c-row u{width:2cqw;height:2cqw;border-radius:50%;background:linear-gradient(135deg,#c9a46a,#8a6a3a)}
+.mk-c-row:nth-of-type(3) u{background:linear-gradient(135deg,#5e6ad2,#c084fc)}.mk-c-row:nth-of-type(4) u{background:linear-gradient(135deg,#27ae60,#56ccf2)}
+
+/* ===== 4 · Онлайн-школа — Stripe (градиент, фото, стеклянные карточки) ===== */
+.mk-d{background:#f6f9fc;color:#0d253d;display:flex;flex-direction:column}
+.mk-d-mesh{position:absolute;inset:0;overflow:hidden}
+.mk-d-mesh i{position:absolute;border-radius:50%;filter:blur(6cqw);opacity:.75}
+.mk-d-mesh i:nth-child(1){width:40cqw;height:40cqw;background:#a960ee;left:-10cqw;top:-16cqw}
+.mk-d-mesh i:nth-child(2){width:36cqw;height:36cqw;background:#90e0ff;right:-8cqw;top:-12cqw}
+.mk-d-mesh i:nth-child(3){width:30cqw;height:30cqw;background:#ffcb57;left:28cqw;top:22cqw;opacity:.45}
+.mk-d > :not(.mk-d-mesh){position:relative}
+.mk-d-n{display:flex;align-items:center;justify-content:space-between;padding:1.8cqw 5cqw;font-size:1.1cqw;font-weight:500;color:#273951}
+.mk-d-n b{font-size:2cqw;font-weight:700;letter-spacing:-.1cqw;color:#0d253d}
+.mk-d-nav{display:flex;gap:2.6cqw}
+.mk-d-n em{background:#0d253d;color:#fff;border-radius:3cqw;padding:.6cqw 1.3cqw}
+.mk-d-h{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;padding:1.6cqw 5cqw 0;flex:1;min-height:0}
+.mk-d-pill{display:inline-flex;gap:.6cqw;align-items:center;background:#ffffffb3;backdrop-filter:blur(8px);border-radius:3cqw;padding:.45cqw 1.1cqw;font-size:1cqw;font-weight:600;color:#533afd}
+.mk-d-h h6{font-size:5cqw;font-weight:600;letter-spacing:-.26cqw;line-height:1;margin-top:1.4cqw}
+.mk-d-h h6 i{background:linear-gradient(90deg,#533afd,#a960ee,#ff5e8a);-webkit-background-clip:text;background-clip:text;color:transparent}
+.mk-d-h p{font-size:1.35cqw;color:#425466;margin-top:1.4cqw;line-height:1.5;max-width:32cqw}
+.mk-d-btn{display:flex;gap:1.4cqw;align-items:center;margin-top:2cqw;font-size:1.15cqw;font-weight:500}
+.mk-d-btn em{background:#533afd;color:#fff;border-radius:3cqw;padding:.85cqw 1.6cqw;box-shadow:0 1cqw 2cqw -1cqw #533afd}
+.mk-d-btn span{color:#533afd}
+.mk-d-av{display:flex;align-items:center;gap:1cqw;margin-top:2.2cqw;font-size:1cqw;color:#425466}
+.mk-d-av i{width:2.6cqw;height:2.6cqw;border-radius:50%;border:.25cqw solid #fff;margin-right:-1.6cqw}
+.mk-d-av b{margin-left:1.8cqw;color:#0d253d}
+.mk-d-ph{position:relative;border-radius:1.8cqw 1.8cqw 0 0;overflow:hidden;box-shadow:0 3cqw 6cqw -2cqw #32325d55}
+.mk-d-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mk-d-card{position:absolute;background:#ffffffe6;backdrop-filter:blur(12px);border-radius:1cqw;box-shadow:0 2cqw 4cqw -1.4cqw #32325d66;padding:1.2cqw 1.4cqw;font-size:.95cqw;color:#64748d}
+.mk-d-card b{display:block;font-size:1.25cqw;color:#0d253d;font-weight:600}
+.mk-d-c1{left:1.4cqw;top:1.4cqw;width:18cqw}
+.mk-d-bar{height:.6cqw;background:#e3e8ee;border-radius:1cqw;margin-top:.8cqw;overflow:hidden}.mk-d-bar i{display:block;height:100%;width:72%;background:linear-gradient(90deg,#533afd,#a960ee)}
+.mk-d-c2{right:2cqw;bottom:3cqw;display:flex;align-items:center;gap:1cqw}
+.mk-d-c2 i{width:3cqw;height:3cqw;border-radius:50%;background:linear-gradient(135deg,#15be53,#90e0ff);display:grid;place-items:center;color:#fff;font-size:1.4cqw}
+.mk-d-f{display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw;padding:1.4cqw 5cqw 1.8cqw;background:#ffffffcc;backdrop-filter:blur(10px);border-top:1px solid #e3e8ee}
+.mk-d-f div{font-size:.95cqw;color:#64748d}
+.mk-d-f b{display:block;font-size:2cqw;font-weight:600;color:#0d253d;letter-spacing:-.06cqw}
+
+/* ===== 5 · Интернет-магазин — Nike (фото-герой, сетка товаров) ===== */
+.mk-e{background:#fff;color:#111;display:flex;flex-direction:column}
+.mk-e-top{background:#f5f5f5;font-size:.9cqw;text-align:center;padding:.5cqw}
+.mk-e-n{display:flex;align-items:center;justify-content:space-between;padding:1.1cqw 3cqw;font-size:1.1cqw;font-weight:500}
+.mk-e-n b{font-size:2cqw;font-weight:900;letter-spacing:-.1cqw;font-style:italic}
+.mk-e-nav{display:flex;gap:2.2cqw}
+.mk-e-n span{display:flex;align-items:center;gap:1.2cqw}.mk-e-n em{background:#f5f5f5;border-radius:3cqw;padding:.55cqw 1.4cqw;color:#707072;font-size:1cqw}
+.mk-e-h{position:relative;margin:0 3cqw;height:29cqw;overflow:hidden;background:#111}
+.mk-e-h img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 60%}
+.mk-e-h::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#000c,#0000 60%)}
+.mk-e-tx{position:absolute;z-index:1;left:3cqw;bottom:3cqw;color:#fff}
+.mk-e-tx small{font-size:1.1cqw;color:#ffffffb3}
+.mk-e-tx h6{font-size:6.4cqw;font-weight:900;letter-spacing:-.3cqw;line-height:.86;text-transform:uppercase;margin-top:.6cqw}
+.mk-e-tx div{display:flex;gap:.8cqw;margin-top:1.6cqw;font-size:1.1cqw;font-weight:500}
+.mk-e-tx em{background:#fff;color:#111;border-radius:3cqw;padding:.75cqw 1.5cqw}
+.mk-e-tx span{border:1px solid #ffffff80;border-radius:3cqw;padding:.75cqw 1.5cqw}
+.mk-e-g{display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw;padding:1.3cqw 3cqw}
+.mk-e-g img{width:100%;aspect-ratio:1.3;object-fit:cover;display:block;background:#f5f5f5}
+.mk-e-g b{display:block;font-size:1.1cqw;font-weight:600;margin-top:.6cqw}
+.mk-e-g small{display:block;font-size:.95cqw;color:#707072}
+.mk-e-g strong{display:block;font-size:1.1cqw;font-weight:600;margin-top:.2cqw}
+.mk-e-sale{color:#d30005}
+.lp-base{position:relative;height:16px;width:116%;margin-left:-8%;background:linear-gradient(#3a3a3a,#1a1a1a);border-radius:0 0 14px 14px}
+.lp-base::before{content:"";position:absolute;top:0;left:50%;width:18%;height:6px;margin-left:-9%;background:#111;border-radius:0 0 8px 8px}
+.art{position:absolute;z-index:3;background:#efefef;color:var(--ink);box-shadow:0 20px 40px -15px #000;font-size:12px;transition:transform .8s var(--ease)}
+.art small{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.art-lead{left:4%;top:5%;padding:12px 16px;transform:rotate(-5deg)}
+.art-lead .ln{display:flex;align-items:center;gap:12px}
+.art-lead b{font-size:30px;font-weight:600;letter-spacing:-1px;color:#0c9a4a;line-height:1}
+.art-lead svg{width:80px;height:30px}
+.art-lead span{display:block;color:var(--muted);margin-top:4px}
+.art-plat{right:4%;top:3%;padding:12px 16px;transform:rotate(4deg);max-width:230px}
+.art-plat b{display:block;font-size:40px;font-weight:600;letter-spacing:-1.5px;line-height:1;color:var(--red)}
+.art-plat span{display:block;color:var(--muted);margin-top:6px;line-height:1.35}
+.chips2{display:flex;flex-wrap:wrap;gap:6px}
+.chips2 i{font-style:normal;font-weight:600;font-size:12px;padding:5px 9px;background:#fff;border:1px solid #d8d8d8}
+.chips2 i:first-child{background:var(--red);border-color:var(--red);color:#fff}
+.art-dev{right:7%;bottom:12%;padding:12px 16px;transform:rotate(-4deg)}
+.art-dev .devs{display:flex;align-items:flex-end;gap:10px;color:var(--ink);margin-bottom:8px}
+.art-dev svg:nth-child(1){width:46px}.art-dev svg:nth-child(2){width:24px}.art-dev svg:nth-child(3){width:15px;color:var(--red)}
+.art-dev span{color:var(--muted)}
+.art-speed{left:6%;bottom:10%;padding:12px 16px;transform:rotate(4deg);display:flex;align-items:center;gap:12px}
+.art-speed svg{width:46px;height:46px}
+.art-speed small{margin-bottom:2px}.art-speed b{font-size:22px;font-weight:600;letter-spacing:-.5px}
+
+/* ===== НОВОЕ: скорость (PageSpeed) ===== */
+.speed{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px;align-items:stretch}
+.speed-l{background:var(--ink);color:var(--grey);padding:40px;display:flex;flex-direction:column}
+.speed-l h3{font-size:30px;letter-spacing:-1.5px;line-height:1.05}
+.speed-l .descr{color:#949494;margin-top:16px}
+.switch{display:grid;grid-template-columns:1fr 1fr;margin-top:36px;background:#232323;padding:4px;position:relative}
+.switch button{position:relative;z-index:1;background:none;border:0;color:#949494;font:inherit;font-size:14px;font-weight:600;padding:14px 10px;cursor:pointer;transition:color .3s}
+.switch button.on{color:#fff}
+.switch .knob{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:var(--red);transition:transform .5s var(--ease)}
+.switch.ours .knob{transform:translateX(100%)}
+.switch-hint{font-size:13px;color:#797979;margin-top:12px}
+.speed-l ul{margin-top:auto;padding-top:36px;display:flex;flex-direction:column;gap:14px;font-size:15px}
+.speed-l li{display:flex;gap:12px;align-items:flex-start}
+.speed-l li::before{content:"";width:10px;height:10px;background:var(--red);margin-top:6px;flex:none}
+.report{background:#fff;border:1px solid #e6e6e6;padding:32px 36px;display:flex;flex-direction:column}
+.report .url{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);padding-bottom:20px;border-bottom:1px solid #eee}
+.report .url b{color:var(--ink);font-weight:600}
+.report .url .dev{margin-left:auto;padding:4px 10px;background:var(--grey);color:var(--ink);font-weight:500}
+.gauges{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:30px 0;border-bottom:1px solid #eee}
+.g{text-align:center}
+.g svg{width:96px;height:96px;display:block;margin:0 auto 10px}
+.g circle{fill:none;stroke-width:6}
+.g .bg{stroke-opacity:.15}
+.g .fg{stroke-linecap:round;stroke-dasharray:264;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.2s var(--ease),stroke .4s}
+.g .fill{transition:fill .4s;fill-opacity:.08;stroke:none!important}
+.g text{font-size:26px;font-weight:600;text-anchor:middle;dominant-baseline:central;transition:fill .4s}
+.g span{font-size:13px;color:#555}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:20px 40px;padding-top:26px}
+.m small{display:flex;align-items:center;gap:8px;font-size:13px;color:#555}
+.m small i{width:9px;height:9px;transition:background .4s,border-radius .4s}
+.m b{display:block;font-size:30px;font-weight:600;letter-spacing:-1px;margin-top:4px;font-variant-numeric:tabular-nums;transition:color .4s}
+.verdict{margin-top:26px;padding:14px 16px;font-size:14px;font-weight:500;transition:background .4s,color .4s}
+
+/* ===== 6. Что входит в работу ===== */
+.work{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.wcard{position:relative;height:500px;overflow:hidden;background:#111;color:#fff;outline:none}
+.wcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wcard h3{position:absolute;left:20px;top:22px;z-index:2;font-size:20px;letter-spacing:-.5px}
+.wcard .plate{position:absolute;left:0;right:0;bottom:0;z-index:3;background:var(--grey-2);color:var(--ink);padding:24px 20px;font-size:15px;line-height:1.6;transform:translateY(101%);transition:transform .5s var(--ease)}
+.wcard:hover .plate,.wcard:focus .plate{transform:none}
+
+/* ===== НОВОЕ: поток заявок по этапам ===== */
+.flow{background:var(--ink);color:var(--grey);overflow:hidden}
+.flow .head .descr{color:#949494}
+.stages{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
+.stage{position:relative;padding:24px 20px 26px;border:1px solid #2a2a2a;transition:border-color .5s,background .5s}
+.fs-n{display:block;font-size:12px;font-weight:600;letter-spacing:.1em;color:#5a5a5a;transition:color .4s}
+.fs-ico{position:relative;z-index:2;width:64px;height:64px;margin:18px 0 22px;display:grid;place-items:center;background:#242424;transition:background .4s,box-shadow .5s}
+.fs-ico svg{width:28px;height:28px;fill:#8a8a8a;transition:fill .4s}
+.fs-num{display:block;font-size:40px;font-weight:600;letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums;color:#4a4a4a;transition:color .4s}
+.fs-lbl{display:block;font-size:14px;color:#797979;margin-top:8px}
+.fs-conv{display:inline-block;margin-top:16px;font-size:12px;font-weight:600;padding:4px 8px;border:1px solid #333;color:#5a5a5a;transition:background .4s,border-color .4s,color .4s}
+.stage.on{border-color:var(--red);background:#1b1b1b}
+.stage.done{background:#191919}
+.stage.on .fs-ico,.stage.done .fs-ico{background:var(--red)}
+.stage.on .fs-ico{box-shadow:0 0 0 6px rgba(207,4,14,.18),0 10px 30px rgba(207,4,14,.35)}
+.stage.on .fs-ico svg,.stage.done .fs-ico svg{fill:#fff}
+.stage.on .fs-num,.stage.done .fs-num{color:#efefef}
+.stage.on .fs-n,.stage.done .fs-n{color:var(--red)}
+.stage.on .fs-conv,.stage.done .fs-conv{background:var(--red);border-color:var(--red);color:#fff}
+.rail{position:absolute;height:2px;background:#2a2a2a;pointer-events:none}
+.rail i{position:absolute;inset:0;background:var(--red);transform-origin:left;transform:scaleX(0)}
+.rail.v{width:2px}.rail.v i{transform-origin:top;transform:scaleY(0)}
+.rail b{position:absolute;top:50%;left:0;width:90px;height:2px;margin-top:-1px;background:linear-gradient(90deg,transparent,#ff3b3b);opacity:0;transition:opacity .3s}
+.rail b::after{content:"";position:absolute;right:-5px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(207,4,14,.45),0 0 24px 6px rgba(255,59,59,.7)}
+.rail.v b{width:2px;height:90px;left:50%;top:0;margin:0 0 0 -1px;background:linear-gradient(180deg,transparent,#ff3b3b)}
+.rail.v b::after{right:auto;left:50%;top:auto;bottom:-5px;margin:0 0 0 -5px}
+.rail.go b{opacity:1}
+.fs-bar{display:block;height:4px;background:#2a2a2a;margin-top:14px;overflow:hidden}
+.fs-bar i{display:block;height:100%;width:var(--w);background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease)}
+.stage.on .fs-bar i,.stage.done .fs-bar i{transform:none}
+.flow-sum{margin-top:36px;font-size:20px;font-weight:500;letter-spacing:-.5px;color:#949494;opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s var(--ease)}
+.flow-sum.on{opacity:1;transform:none}
+.flow-sum b{color:#efefef;font-weight:600}
+.flow-note{margin-top:14px;font-size:13px;color:#797979;max-width:720px}
+.niches{display:flex;align-items:center;gap:16px 24px;flex-wrap:wrap;margin:-24px 0 28px}
+.niche-lbl{font-size:14px;color:#949494}
+.niche-tabs{display:flex;flex-wrap:wrap;gap:6px}
+.niche-tabs button{background:transparent;border:1px solid #333;color:#bdbdbd;font:inherit;font-size:14px;font-weight:500;padding:9px 14px;cursor:pointer;transition:background .25s,border-color .25s,color .25s}
+.niche-tabs button:hover{border-color:#777;color:#fff}
+.niche-tabs button.on{background:var(--grey);border-color:var(--grey);color:var(--ink)}
+
+/* ===== 7. Кейсы — изображения статичные, целиком во фрейме ===== */
+.case{display:block;padding-bottom:30px;border-bottom:1px solid var(--line);margin-bottom:100px}
+.case .cat{color:var(--muted);font-size:16px;margin-bottom:20px}
+.case .img img{width:100%;height:auto}
+.case .meta{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-top:20px}
+.case h3{font-size:40px;font-weight:400;letter-spacing:-.5px;line-height:1.1}
+.case .meta p{color:var(--muted);margin-top:16px;max-width:600px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{border:1px solid var(--ink);padding:5px 16px;font-size:16px;white-space:nowrap}
+.chips span b{color:var(--red);font-weight:600}
+.cases-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.cases-2 .meta{flex-direction:column}
+.cases-2 .case{margin-bottom:60px}.cases-2 .case:nth-last-child(-n+2){margin-bottom:0;border-bottom:0;padding-bottom:0}
+
+/* ===== НОВОЕ: манифест ===== */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+.share{background:var(--ink);color:var(--grey);padding:40px;display:flex;flex-direction:column}
+.share-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+.share-top b{display:block;font-size:120px;font-weight:600;letter-spacing:-7px;line-height:.9;font-variant-numeric:tabular-nums}
+.share-top b small{font-size:60px;letter-spacing:-3px;color:var(--red)}
+.share-top p{max-width:240px;color:#949494;font-size:15px;padding-top:10px}
+.share-top p strong{color:var(--grey);font-weight:600}
+.cms{margin-top:auto;padding-top:44px;display:flex;flex-direction:column;gap:18px}
+.cms-row{display:grid;grid-template-columns:1fr auto;row-gap:8px;align-items:end;font-size:14px;color:#bdbdbd}
+.cms-row b{grid-row:1;grid-column:2;font-size:14px;font-weight:600;color:#efefef;line-height:1;font-variant-numeric:tabular-nums}
+.cms-row.wp{color:#fff;font-weight:600}
+.cms-row.wp b{color:var(--red);font-size:20px}
+.cms-bar{grid-column:1/-1;display:grid;grid-template-columns:repeat(43,1fr);gap:3px}
+.cms-bar i{aspect-ratio:1;background:#555;transform:scale(0);transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.cms-row.wp .cms-bar i{background:var(--red)}
+.cms.on .cms-bar i{transform:none}
+.share-src{font-size:12px;color:#5a5a5a;margin-top:10px}
+.feats{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--canvas)}
+.feat{position:relative;background:var(--grey);padding:28px 26px 30px;overflow:hidden;transition:background .35s}
+.feat::before{content:"";position:absolute;left:0;top:0;width:100%;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.feat:hover{background:#e8e8e8}
+.feat:hover::before{transform:none}
+.feat .fn{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.1em;color:#a3a3a3;text-transform:uppercase}
+.feat .badge{font-size:11px;letter-spacing:.06em;color:#fff;background:var(--red);padding:3px 8px}
+.feat h3{font-size:20px;letter-spacing:-.5px;margin:22px 0 10px}
+.feat p{font-size:14px;line-height:1.55;color:#626262}
+
+/* ===== 8. Как мы работаем ===== */
+.steps .st{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;padding:56px 0;border-bottom:1px solid var(--line);position:relative}
+.steps .st:last-child{border:0}
+.steps .st h3{font-size:20px;transition:transform .4s var(--ease)}
+.steps .st:hover h3{transform:translateX(30px)}
+.steps .st p{color:var(--muted);max-width:435px}
+.steps .st .sq{position:absolute;right:0;top:50%;width:44px;height:44px;transform:translateY(-50%);overflow:visible;transition:transform .6s cubic-bezier(.34,1.56,.64,1),filter .5s}
+.sq rect{transform-box:fill-box;transform-origin:center;transition:fill .4s}
+.sq rect.r{fill:var(--grey-2)}
+.st.in .sq rect.r{fill:var(--red)}
+.st.in .sq rect.r:nth-of-type(2){transition-delay:.15s}.st.in .sq rect.r:nth-of-type(3){transition-delay:.3s}.st.in .sq rect.r:nth-of-type(4){transition-delay:.45s}
+.steps .st:hover .sq{transform:translateY(-50%) scale(1.45);filter:drop-shadow(0 8px 18px rgba(0,0,0,.12))}
+.st:hover .sq rect.r{animation:sqwave 1.1s ease-in-out both}
+.st:hover .sq rect.r:nth-of-type(2){animation-delay:.12s}.st:hover .sq rect.r:nth-of-type(3){animation-delay:.24s}.st:hover .sq rect.r:nth-of-type(4){animation-delay:.36s}
+@keyframes sqwave{0%,100%{fill:var(--red)}40%{fill:#ff3b3b}}
+
+/* ===== 9. Тарифы ===== */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(5,auto);column-gap:2px}
+.price-card{background:#fff;padding:40px 32px 36px;position:relative;display:grid;grid-row:span 5;grid-template-rows:subgrid}
+.price-card--partner{background:#1a1a1a}
+.price-card__index{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin:0 0 20px}
+.price-card--partner .price-card__index{color:rgba(255,255,255,.35)}
+.price-card__name{font-size:30px;font-weight:700;line-height:1.1;letter-spacing:-.02em;color:#1a1a1a;margin:0 0 8px}
+.price-card--partner .price-card__name{color:#fff}
+.price-card__tagline{font-size:14px;line-height:1.5;color:#666;margin:0 0 32px;padding-bottom:32px;border-bottom:1px solid #ebebeb}
+.price-card--partner .price-card__tagline{color:rgba(255,255,255,.5);border-bottom-color:rgba(255,255,255,.1)}
+.price-features{margin:0 0 36px;display:flex;flex-direction:column;gap:12px;align-self:start}
+.price-features li{font-size:14px;line-height:1.45;color:#2a2a2a;display:flex;align-items:flex-start;gap:10px}
+.price-card--partner .price-features li{color:rgba(255,255,255,.85)}
+.price-check{display:inline-flex;width:16px;height:16px;flex-shrink:0;margin-top:2px}
+.price-btn{display:inline-flex;align-items:center;gap:8px;color:#efefef;background:#cf040e;padding:15px 20px;font-weight:600;line-height:1.55;letter-spacing:-1px;font-size:17px;border:none;cursor:pointer;align-self:flex-start;transition:background-color .2s ease-out}
+.price-btn{justify-self:start;align-self:start}
+.price-btn:hover{background:#ff020e}
+.price-btn--outline{background:transparent;border:1.5px solid rgba(255,255,255,.25);color:#fff}
+.price-btn--outline:hover{background:rgba(255,255,255,.08)}
+.price-btn__arrow{display:inline-flex;transition:transform .2s ease-out}
+.price-btn:hover .price-btn__arrow{transform:translateX(3px)}
+.price-partner-badge{position:absolute;top:38px;right:32px;margin:0!important}
+.price-partner-badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#cf040e;border:1px solid #cf040e;border-radius:2px;padding:3px 8px;margin-bottom:16px;align-self:flex-start}
+
+/* ===== 10. Отзывы ===== */
+.slider{position:relative;max-width:1360px;margin:0 auto;text-align:center;overflow-x:clip}
+html{overflow-x:clip}
+.slides{display:grid}
+.slide{grid-area:1/1;padding:0 100px;opacity:0;transform:translateX(40px);transition:opacity .6s var(--ease),transform .6s var(--ease);pointer-events:none}
+.slide.on{opacity:1;transform:none;pointer-events:auto}
+.slide p{font-size:16px;line-height:1.5;max-width:1160px;margin:0 auto}
+.slide img{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:36px auto 12px}
+.slide b{display:block;font-size:20px;font-weight:600}
+.slide span{display:block;margin-top:4px}
+.arrow{position:absolute;top:110px;width:40px;height:40px;border-radius:50%;background:var(--red);border:0;color:#fff;cursor:pointer;display:grid;place-items:center;transition:background .25s;z-index:2}
+.arrow:hover{background:var(--red-hover)}
+.arrow.l{left:-10px}.arrow.r{right:-10px}
+.dots{display:flex;justify-content:center;gap:6px;margin-top:36px}
+.dots button{width:10px;height:10px;border:0;background:#d8d8d8;cursor:pointer;padding:0;transition:background .3s}
+.dots button.on{background:var(--red)}
+
+/* ===== 11. Контакты ===== */
+.channels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ch{background:#e8e8e8;color:var(--ink);padding:24px 24px 26px;min-height:144px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border:2px solid transparent;transition:background .3s,color .3s,border-color .3s}
+.ch .mi{width:28px;height:28px;margin-bottom:auto}
+.ch b{font-size:16px;font-weight:600}
+.ch small{font-size:13px;opacity:.75}
+.ch:hover{background:var(--red);color:#fff}
+.ch.out{border-color:var(--red)}
+.form-wrap{display:grid;grid-template-columns:1fr 1fr;gap:80px;margin-top:110px;align-items:start}
+.form-wrap h3{font-size:20px}
+.form-wrap .descr{margin:28px 0 48px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:28px 16px}
+.f{position:relative}
+.f input,.f textarea{width:100%;border:0;border-bottom:1px solid var(--ink);background:transparent;font:inherit;padding:22px 0 12px;outline:none;resize:none;transition:border-color .3s}
+.f label{position:absolute;left:0;top:20px;color:var(--muted);pointer-events:none;transition:.25s var(--ease)}
+.f input:focus,.f textarea:focus{border-color:var(--red)}
+.f input:focus+label,.f input:not(:placeholder-shown)+label,.f textarea:focus+label,.f textarea:not(:placeholder-shown)+label{top:0;font-size:12px;color:var(--red)}
+.agree{grid-column:1/-1;display:flex;gap:10px;font-size:14px;align-items:flex-start;cursor:pointer}
+.agree input{appearance:none;width:20px;height:20px;border:1.5px solid var(--red);flex:none;cursor:pointer;display:grid;place-items:center}
+.agree input:checked{background:var(--red)}
+.agree input:checked::after{content:"✓";color:#fff;font-size:13px}
+form .btn{grid-column:1/-1;justify-self:start}
+.sent{display:none;grid-column:1/-1}
+form.done > *:not(.sent){display:none}
+form.done .sent{display:block}
+.form-img{height:560px;overflow:hidden}
+.form-img img{width:100%;height:100%;object-fit:cover}
+
+/* ===== 12. FAQ ===== */
+.q{background:var(--grey);margin-bottom:12px}
+.q button{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:15px 22px 15px 36px;min-height:78px;cursor:pointer;font-size:20px;font-weight:600;letter-spacing:-.5px;line-height:1.2}
+.q button:focus-visible{outline:2px solid var(--red)}
+.plus{width:48px;height:48px;flex:none;border-radius:50%;background:var(--red);position:relative;transition:transform .5s var(--ease)}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:26px;height:2px;background:#fff;transform:translate(-50%,-50%)}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.q.open .plus{transform:rotate(135deg)}
+.ans{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
+.q.open .ans{grid-template-rows:1fr}
+.ans>div{overflow:hidden}
+.ans-body{padding:0 36px 28px 36px;color:#555;font-size:15px;line-height:1.6}
+.ans-body p+p,.ans-body ol+p,.ans-body p+ol{margin-top:12px}
+.ans-body ol{padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.ans-body li::marker{color:var(--red);font-weight:600}
+.ans-body b{color:var(--ink);font-weight:600}
+
+/* ===== Подвал ===== */
+footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
+.foot{display:grid;grid-template-columns:2fr .7fr 1.3fr 1fr;gap:20px}
+.foot .btn{margin-top:110px}
+.foot h4{font-weight:400;color:#949494;margin-bottom:22px;font-size:16px}
+.foot li{margin-bottom:16px;font-weight:500}
+.foot li a{transition:color .25s}.foot li a:hover{color:var(--red-2)}
+.soc{display:flex;gap:4px;margin-bottom:14px}
+.soc a{position:relative;width:34px;height:34px}
+.soc img{position:absolute;inset:0;width:100%;height:100%;transition:opacity .2s}
+.soc img.hv{opacity:0}
+.soc a:hover img.hv{opacity:1}
+.foot u{display:block;margin-bottom:6px;font-weight:500}
+.copy{background:#000;color:#666;font-size:13px;text-align:center;padding:20px}
+
+@keyframes dash{to{stroke-dashoffset:-16}}
+
+/* ===== Адаптив (брейкпоинты как на сайте-оригинале) ===== */
+@media (min-width:1900px){
+  .types-right{margin-left:-100px}.types-right .descr{margin-right:60px}
+  :root{--gap:240px}
+  .wrap,nav .bar{padding:0 60px}
+  /* «Как бывает / Как работаем» — лесенка из 4 колонок */
+  .compare{grid-template-rows:auto}
+  .col{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto;align-items:start;padding:30px}
+  .col > h3{grid-column:1/-1;font-size:52px;border-bottom:0;padding-bottom:48px}
+  .row{min-height:640px;border-bottom:0;border-left:1px solid #ffffff2e;padding:0 20px}
+  .col.light .row{border-left-color:#0000001f}
+  .col .row:nth-of-type(2){padding-top:100px}.col .row:nth-of-type(3){padding-top:330px}.col .row:nth-of-type(4){padding-top:460px}
+  .col.light .row h4{font-size:25px}
+  .info{position:relative;right:auto;top:auto;margin-top:22px}
+  .tip{right:auto;left:20px;bottom:auto}
+  .pop{position:relative;right:auto;top:auto;display:block;width:180px;margin:24px 0 0 -10px}
+}
+@media (max-width:1199px){:root{--gap:120px}h1{font-size:40px;letter-spacing:-2.5px}h2{font-size:38px;letter-spacing:-2px}.stat b{font-size:52px}.share-top b{font-size:96px;letter-spacing:-5px}nav ul{gap:32px}.gauges{grid-template-columns:repeat(2,1fr)}.fs-num{font-size:32px}.stages{gap:12px}.stage{padding:20px 14px}
+  nav ul{display:none}.burger{display:inline-flex}
+  .logo{font-size:20px}
+  nav .btn-swap{margin-left:auto;margin-right:0;height:45px;padding:0 20px;font-size:16px;letter-spacing:0}
+  .burger{height:45px;padding:0 14px;font-size:16px;letter-spacing:-1px;gap:8px}.burger .mi{width:20px;height:20px}
+  .hero-grid{grid-template-columns:1fr}.shots{margin-top:30px}.hero-tags{margin-top:40px}
+  .compare{grid-template-columns:1fr;grid-template-rows:auto;row-gap:20px}
+  .col{grid-row:auto;display:block}
+  .row{min-height:0}
+  .row.hv .pop{opacity:1;transform:rotate(4deg)}
+  .stats{grid-template-columns:1fr 1fr;padding-top:0}
+  .stat{text-align:left;padding:48px 40px 48px 0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .stat:nth-child(2n){border-right:0;padding-left:40px}
+  .stat:nth-child(n+3){border-bottom:0}
+  .types-head{grid-template-columns:1fr}
+  .types-head .left > div:last-child{grid-row:2;align-self:start}
+  .types-right{grid-column:1;grid-row:3;margin-top:16px;grid-template-columns:246px 1fr}
+  .types-right .descr{grid-column:1/-1;margin-right:0}
+  .show{height:auto;margin-top:40px}
+  .show-stage{position:static;height:auto;grid-template-columns:1fr;padding:0 40px}
+  .show-side{order:2}.show-steps{display:none}
+  .show-nav{display:flex;position:absolute;top:22px;right:0;margin:0}.show-side{position:relative;padding-top:20px}.show-count{line-height:44px}.show-nav button{width:40px;height:40px}.show-prog i{cursor:pointer}
+  .show-side{display:flex;flex-direction:column}.show-count{order:0}.show-prog{order:1;margin-top:6px;gap:3px}.show-prog i{width:14px;height:14px}.show-cat{order:2;margin-top:14px}.show-text{order:3}
+  .show-scene{height:min(56vw,560px)}.laptop{width:78%}
+  .show-scene .art{display:none}
+  .work{grid-template-columns:1fr}
+  .wcard{height:auto;display:flex;flex-direction:column;background:var(--grey-2)}
+  .wcard h3{position:static;color:var(--ink);padding:20px 20px 0}
+  .wcard .plate{position:static;transform:none;padding:8px 20px 20px}
+  .wcard img{position:static;width:100%;height:auto;aspect-ratio:16/9;order:3}
+  .why-grid{grid-template-columns:1fr}
+}
+@media (max-width:959px){
+  :root{--gap:80px}
+  .wrap,nav .bar{padding:0 20px}
+  .logo{font-size:18px;letter-spacing:-1px;white-space:nowrap;line-height:1}
+  nav .bar{padding:0}
+  nav .in{padding:0 20px}
+  nav.scrolled{top:5px}
+  nav.scrolled .in{padding:0 36px}
+  .burger{height:32px;padding:0 12px 0 10px;font-size:14px;letter-spacing:-1px;gap:12px;min-width:91px}.burger .mi{width:15px;height:15px}
+  nav .btn-swap{height:32px;padding:0 16px;font-size:14px;margin-right:5px}
+  nav .in{height:56px}
+  nav.scrolled .burger{background:transparent}
+  h1{font-size:32px;letter-spacing:-2px}h2{font-size:30px;letter-spacing:-2px}
+  .col>h3{font-size:30px;letter-spacing:-2px}
+  .row h4,.col.light .row h4{font-size:20px;line-height:1.1}
+  .hero p{font-size:17px;line-height:1.53;font-weight:600}
+  .descr,.head .descr{font-size:15px;line-height:1.53}
+  .head .descr{letter-spacing:-.5px}
+  .eyebrow{line-height:14px;letter-spacing:-.5px}
+  .hero-tags{font-size:16px;letter-spacing:-1px}
+  .stat b{font-size:50px;letter-spacing:-2.4px;line-height:1.2}
+  .stat > span{font-size:15px}
+  .wcard h3,.steps .st h3{font-size:20px;line-height:1.1}
+  .wcard .plate,.steps .st p{font-size:15px;line-height:1.53}
+  .case h3{font-size:26px}.case .cat,.case .meta p{font-size:15px}
+  .types-right .descr,.types-right ul{font-size:14px;line-height:1.5}
+  .head,.speed,.form-wrap{grid-template-columns:1fr}
+  .head > .descr{grid-column:1;grid-row:3}
+  .head{margin-bottom:40px}
+  .hero{padding:110px 0 40px}
+  .shots{margin-top:30px}
+  .hero-tags{margin-top:40px}
+  /* панели на всю ширину, «i» под заголовком, скриншоты видны сразу */
+  .compare{grid-template-columns:1fr;grid-template-rows:auto;gap:0;margin:0 -20px}
+  .col{padding:30px 20px 10px;grid-row:auto;display:block}
+  .row{min-height:0;padding-bottom:30px}
+  .info{position:relative;right:auto;top:auto;margin-top:18px}
+  .tip{position:relative;right:auto;bottom:auto;width:auto;margin-top:12px;display:none;transform:none}
+  .row.tip-on .tip{display:block}
+  .pop,.row.hov .pop,.row.hv .pop{position:relative;right:auto;top:auto;width:100%;margin-top:20px;opacity:1;transform:none;box-shadow:none}
+  .stat{padding:36px 20px 36px 0}.stat:nth-child(2n){padding-left:20px}
+  .stat > span{margin-top:16px}
+  .types-right{grid-template-columns:231px 1fr}.types-right .descr{max-width:450px}
+  .show-stage{padding:0 20px}
+  .show-scene{height:420px}.laptop{width:86%}
+  /* «Что входит»: плашка с текстом над картинкой */
+  .stages{grid-template-columns:1fr;gap:12px}
+  .stage{display:grid;grid-template-columns:64px 1fr;column-gap:18px;align-items:center}
+  .fs-ico{grid-row:1/6;margin:0}
+  .fs-n,.fs-num,.fs-lbl,.fs-bar{grid-column:2}.fs-conv{grid-column:2;justify-self:start;margin-top:10px}
+  .case .meta{flex-direction:column}
+  .steps .st{padding:40px 64px 40px 0}
+  .price-grid{grid-template-columns:1fr 1fr;grid-template-rows:none;gap:2px}
+  .price-card--partner{grid-column:1/-1}
+  .price-card{grid-row:auto;display:flex;flex-direction:column}
+  .price-card .price-btn{margin-top:auto}
+  .slide{padding:0}.slider{padding-bottom:0}.arrow{top:auto;bottom:-13px;width:40px;height:40px}.arrow.l{left:0}.arrow.r{right:0}.dots{margin-top:46px}
+  .channels{grid-template-columns:1fr 1fr}
+  .form-wrap{margin-top:60px;gap:40px}.form-img{order:-1;height:300px}
+  form .btn{justify-self:stretch;justify-content:center}
+  .ans-body{padding:0 20px 24px 20px}
+  .foot{grid-template-columns:1fr 1fr}.foot .btn{margin-top:28px}
+}
+@media (max-width:640px){
+  h2{font-size:30px;letter-spacing:-1.5px}
+  .logo{white-space:normal;max-width:165px}
+  .burger{letter-spacing:-.5px}
+  .col>h3{letter-spacing:-1.5px}
+  .hero .btn{font-size:16px;letter-spacing:-.5px}
+  .row h4,.col.light .row h4,.wcard h3,.steps .st h3{font-size:18px}
+  .hero p{font-size:16px;line-height:1.5}.hero-tags{font-size:15px;letter-spacing:-.5px;gap:10px 18px}
+  .stat b{font-size:50px;letter-spacing:-3.1px}
+  .stats{grid-template-columns:1fr}
+  .stat,.stat:nth-child(2n){border-right:0;border-bottom:1px solid var(--line);padding:32px 0}
+  .stat:last-child{border-bottom:0}
+  .cases-2{grid-template-columns:1fr}
+  .steps .st{grid-template-columns:1fr 44px;gap:16px;padding:40px 0}
+  .steps .st h3{grid-column:1/-1}
+  .steps .st .sq{position:relative;transform:none;grid-column:2;grid-row:2;align-self:start}
+  .steps .st:hover .sq{transform:scale(1.4)}
+  .price-grid{grid-template-columns:1fr}.price-card--partner{grid-column:auto}
+  .price-partner-badge{position:static;margin:0 0 16px!important}
+  .work{grid-template-columns:1fr}
+  .promo__title{font-size:30px}.promo__timer-unit{min-width:80px;padding:14px 18px 10px}.promo__timer-num{font-size:44px}.promo__timer-sep{font-size:40px}
+  .feats{grid-template-columns:1fr}.share{padding:28px 20px}.share-top b{font-size:80px;letter-spacing:-4px}.share-top b small{font-size:40px}.share-top{flex-direction:column}.cms-bar{gap:2px}
+  .channels{grid-template-columns:1fr}
+  form{grid-template-columns:1fr}
+  .case{margin-bottom:60px}
+  .chips span{font-size:14px;padding:4px 12px}
+  .speed-l,.report{padding:24px 20px}.metrics{grid-template-columns:1fr}.g svg{width:80px;height:80px}
+  .q button{padding:12px 12px 12px 20px;min-height:70px;font-size:16px;letter-spacing:-.3px}.plus{width:40px;height:40px}.plus::before,.plus::after{width:20px}
+  .foot{grid-template-columns:1fr}
+}
+@media (max-width:479px){
+  nav .btn-swap{display:none}
+  .types-right{grid-template-columns:198px 1fr}.types-right .descr{max-width:none}
+  h1{font-size:28px;letter-spacing:-2px}h2{font-size:26px;letter-spacing:-2px}
+  .col>h3{font-size:26px;letter-spacing:-1.5px}
+  .case h3{font-size:22px}
+  .hero .cta{flex-direction:column}.hero .cta .btn{width:100%}
+  .shots{grid-template-columns:1fr}
+  .promo .btn,.types-head .left .btn{width:100%;justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .fu,.zi{opacity:1;transform:none}
+  .rv .w{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav"><div class="bar"><div class="in">
+  <a class="logo" href="#">Разработка сайтов на WordPress</a>
+  <ul><li><a href="#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#cases">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#prices">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#contacts">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
+  <a class="btn btn-swap" href="#contacts">Рассчитать <i class="mi i-arrow"></i></a>
+  <button class="burger" id="burger" aria-label="Открыть меню"><i class="mi i-burger"></i>Меню</button>
+</div></div></nav>
+<div class="mmenu" id="mmenu" aria-hidden="true">
+  <div class="mm-bg" id="mm-bg"></div>
+  <div class="mm-panel">
+    <div class="mm-top"><span class="mm-logo">Разработка сайтов на&nbsp;WordPress</span><button class="mm-close" id="mclose" aria-label="Закрыть меню"><img src="assets/icons/close.svg" alt="" width="30" height="30"></button></div>
+    <div class="mm-nav"><a href="#services">Услуги</a><a href="#cases">Кейсы</a><a href="#prices">Цены</a><a href="#contacts">Контакты</a></div>
+    <div class="mm-foot">
+      <div class="mm-soc">
+        <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
+        <a href="tel:+7" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:hello@studio.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+      </div>
+      <a class="mm-mail" href="mailto:hello@studio.com">hello@studio.com</a>
+      <span class="mm-hours">9:00-20:00 ежедневно</span>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page">
+<!-- 1. Первый экран -->
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <h1 class="fu">Не просто сайт на WordPress — система для заявок и&nbsp;продаж</h1>
+        <p class="fu d1">Создаём быстрый сайт на WordPress и связываем его с рекламой, CRM и аналитикой. Сайт полностью ваш — без абонентской платы конструктору — и работает как понятная система: от первого перехода до заявки и продажи.</p>
+        <div class="cta fu d2">
+          <a class="btn btn-light" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a>
+          <a class="btn btn-light" href="#contacts">Рассчитать проект <i class="mi i-arrow"></i></a>
+        </div>
+      </div>
+      <div class="shots zi d3">
+        <div class="shot"><img src="assets/img/how-1.png" alt="Отчёт Яндекс.Метрики: рост посещаемости"></div>
+        <div class="shot"><img src="assets/img/how-4.png" alt="Яндекс.Директ: рост конверсий"></div>
+      </div>
+    </div>
+    <ul class="hero-tags fu d4"><li>Сайт</li><li>Реклама</li><li>Продвижение</li><li>CRM</li><li>Чат-боты</li><li>SEO</li><li>Аналитика</li></ul>
+  </div>
+</header>
+
+<!-- 2. Красивого сайта недостаточно -->
+<section class="sec"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Одна система: от сайта до заявок и продаж</p><h2 class="rv">Красивого сайта <em>недостаточно</em></h2></div>
+    <p class="descr fu d2">Мы делаем не просто красивый и быстрый сайт на WordPress, а сразу продумываем, как он будет привлекать клиентов, собирать заявки и работать вместе с рекламой, CRM, чат-ботами и аналитикой.</p>
+  </div>
+  <div class="compare">
+    <div class="col dark fu">
+      <h3>Как бывает обычно</h3>
+      <div class="row"><span class="tag">Сайт</span><h4>Купили шаблон, поставили 40 плагинов — и на этом работа закончилась</h4></div>
+      <div class="row"><span class="tag">Реклама</span><h4>Реклама есть, аналитики нет — бюджет уходит в никуда</h4></div>
+      <div class="row"><span class="tag">Результат</span><h4>Сайт не конвертит — решают, что «реклама не работает»</h4></div>
+      <div class="row"><span class="tag">Итог</span><h4>Нет единой системы — каждый инструмент сам по себе</h4></div>
+    </div>
+    <div class="col light fu d2">
+      <h3>Как работаем мы</h3>
+      <div class="row hv"><span class="tag red">Аналитика</span><h4>Настраиваем аналитику</h4>
+        <button class="info" aria-label="Подробнее про аналитику" aria-expanded="false">i</button>
+        <div class="tip" role="tooltip">Подключаем Метрику и цели, настраиваем ключевые события и отслеживание заявок. Это позволяет понять, откуда приходят клиенты, какие страницы работают лучше и где теряются обращения.</div>
+        <img class="pop" src="assets/img/how-1.png" alt=""></div>
+      <div class="row hv"><span class="tag blk">Чат-боты</span><h4>Подключаем чат-ботов</h4>
+        <button class="info" aria-label="Подробнее про чат-ботов" aria-expanded="false">i</button>
+        <div class="tip" role="tooltip">Чат-боты помогают быстро обработать обращение, собрать контакты, ответить на типовые вопросы и направить клиента в нужный сценарий. Это ускоряет коммуникацию и снижает потери заявок.</div>
+        <img class="pop" src="assets/img/how-2.png" alt=""></div>
+      <div class="row hv"><span class="tag red">Автоматизация</span><h4>Подключаем CRM</h4>
+        <button class="info" aria-label="Подробнее про CRM" aria-expanded="false">i</button>
+        <div class="tip" role="tooltip">Настраиваем передачу заявок с сайта на WordPress в CRM, уведомления менеджерам, статусы, воронку и базовую автоматизацию. Обращения не теряются, а работа с клиентами становится прозрачной и управляемой.</div>
+        <img class="pop" src="assets/img/how-3.png" alt=""></div>
+      <div class="row hv"><span class="tag blk">Продвижение</span><h4>Продвигаем сайт</h4>
+        <button class="info" aria-label="Подробнее про продвижение" aria-expanded="false">i</button>
+        <div class="tip" role="tooltip">Готовим сайт к продвижению, запускаем рекламу и смотрим на реальные показатели: заявки, стоимость обращения, конверсию и окупаемость. Дальше улучшаем связку на основе данных, а не догадок.</div>
+        <img class="pop" src="assets/img/how-4.png" alt=""></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 3. Партнёрство -->
+<section class="sec"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Партнёрство вместо подряда</p><h2 class="rv">Наша задача — чтобы ваш сайт приносил <em>заявки и&nbsp;продажи</em></h2></div>
+    <p class="descr fu d2">Не заканчиваем работу на разработке сайта.<br>Связываем WordPress, рекламу, CRM и аналитику и смотрим, как вся цепочка влияет на заявки и продажи.</p>
+  </div>
+  <div class="stats">
+    <div class="stat fu"><b><span data-count="20">20</span>+</b><span>лет в digital<br>и продажах</span></div>
+    <div class="stat fu d1"><b>1 команда</b><span>от разработки<br>до продвижения</span></div>
+    <div class="stat fu d2"><b><span data-count="100">100</span>%</b><span>проектов готовы<br>к аналитике и рекламе</span></div>
+    <div class="stat fu d3"><b>1 система</b><span>УТП → сайт → реклама →<br>заявка → CRM</span></div>
+  </div>
+</div></section>
+
+<!-- 4. Акция -->
+<section class="promo" aria-labelledby="promo-heading">
+  <div class="promo__inner">
+    <div class="promo__badge">Акция</div>
+    <h2 class="promo__title" id="promo-heading">Бесплатный сайт в счёт<br>системы продвижения</h2>
+    <p class="promo__sub">Пока идёт таймер — лендинг на WordPress за наш счёт.</p>
+    <div class="promo__timer" aria-label="Обратный отсчёт">
+      <div class="promo__timer-unit"><span class="promo__timer-num" id="promo-min">15</span><span class="promo__timer-label">мин</span></div>
+      <div class="promo__timer-sep">:</div>
+      <div class="promo__timer-unit"><span class="promo__timer-num" id="promo-sec">00</span><span class="promo__timer-label">сек</span></div>
+    </div>
+    <div class="promo__progress-wrap" aria-hidden="true"><div class="promo__progress-bar" id="promo-bar"></div></div>
+    <a href="#contacts" class="btn btn-red">Получить бесплатный сайт <i class="mi i-arrow"></i></a>
+  </div>
+</section>
+
+<!-- 5. Разработка под задачу -->
+<section class="sec" id="services"><div class="wrap">
+  <div class="types-head">
+    <div class="left">
+      <div><p class="eyebrow fu">Разработка под задачу</p><h2 class="rv">Подбираем платформу под задачу бизнеса и <em>требования проекта</em></h2></div>
+      <div class="fu d2"><a class="btn btn-red" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a></div>
+    </div>
+    <div class="types-right fu d2">
+      <p class="descr">Лендинги для рекламы, корпоративные сайты для бизнеса, интернет-магазины для продаж. Работаем с разными платформами и выбираем ту, которая лучше подходит под задачи проекта.</p>
+      <ul><li><a href="#">Tilda</a></li><li><a href="#">1С-Битрикс</a></li><li><a href="#">WordPress</a></li><li><a href="#">OpenCart</a></li></ul>
+      <ul><li><a href="#">MODX</a></li><li><a href="#">Drupal</a></li><li><a href="#">Joomla</a></li><li><a href="#">AI-автоматизация</a></li></ul>
+    </div>
+  </div>
+</div>
+<div class="show" id="show">
+  <div class="show-stage">
+    <div class="show-side">
+      <div class="show-count"><b id="show-n">01</b> / 05</div>
+      <div class="show-cat" id="show-cat"><span class="on">Стоматология</span><span>Ремонт квартир</span><span>Юридические услуги</span><span>Онлайн-школа</span><span>Интернет-магазин</span></div>
+      <p class="show-text">Сайт собираем под задачу бизнеса: от прототипа и дизайна до адаптивной вёрстки на WordPress. Без купленных шаблонов.</p>
+      <div class="show-prog" id="show-prog"><i class="on" role="button" aria-label="Дизайн 1"></i><i role="button" aria-label="Дизайн 2"></i><i role="button" aria-label="Дизайн 3"></i><i role="button" aria-label="Дизайн 4"></i><i role="button" aria-label="Дизайн 5"></i></div>
+      <div class="show-nav"><button id="show-prev" aria-label="Предыдущий дизайн">←</button><button id="show-next" aria-label="Следующий дизайн">→</button></div>
+      <div class="show-steps"><span class="on">Анализ задачи и прототип</span><span class="on">Визуальный стиль и дизайн</span><span class="on">Адаптивная вёрстка</span><span class="on">Сборка на WordPress</span></div>
+    </div>
+    <div class="show-scene" aria-label="Примеры дизайнов, листайте влево и вправо">
+      <div class="art art-lead" data-d="-30"><small>Заявки с сайта</small><div class="ln"><b>+38%</b><svg viewBox="0 0 90 32"><path d="M2 28 L18 24 L32 26 L46 16 L60 18 L74 8 L88 4" fill="none" stroke="#0c9a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span>за первый месяц после запуска</span></div>
+      <div class="art art-plat" data-d="40"><small>Платформа под задачу</small><b>10+</b><span>платформ и разработка с нуля — подберём выгодное решение</span></div>
+      <div class="laptop">
+        <div class="lp-screen"><div class="lp-view" id="lp-view">
+          <div class="ds mk-a on">
+            <div class="mk-a-n"><b>Dentique</b><span class="mk-a-nav"><span>Клиника</span><span>Имплантация</span><span>Виниры</span><span>Врачи</span><span>Цены</span></span><em>Записаться</em></div>
+            <div class="mk-a-h"><div class="mk-a-tx"><span class="mk-a-ey">Новая клиника на Петроградской</span><h6>Улыбка. Переосмыслена.</h6><p>Имплантация, виниры и лечение без боли. План лечения и цена — на первом приёме.</p><div class="mk-a-cta"><em>Записаться</em><span>Смотреть цены ›</span></div></div>
+              <div class="mk-a-ph"><img src="assets/img/stock/dent-hero.jpg" alt="" loading="lazy"><div class="mk-a-chip mk-a-c1">Рейтинг<b>4,9 ★</b>2 300 отзывов</div><div class="mk-a-chip mk-a-c2">Гарантия<b>до 10 лет</b></div></div></div>
+            <div class="mk-a-t"><div class="k"><img src="assets/img/stock/dent-clinic.jpg" alt="" loading="lazy"><small>Имплантация</small><b>от 39 900 ₽</b><span>Подробнее ›</span></div><div><small>Виниры E.max</small><b>от 24 500 ₽</b><span>Подробнее ›</span></div><div><small>Отбеливание</small><b>за 1 час</b><span>Подробнее ›</span></div></div>
+          </div>
+          <div class="ds mk-b">
+            <img class="mk-b-bg" src="assets/img/stock/reno-hero.jpg" alt="" loading="lazy">
+            <div class="mk-b-n"><span class="mk-b-logo"><i></i>domika</span><span class="mk-b-nav"><span>Ремонт под ключ</span><span>Дизайн-проект</span><span>Портфолио</span><span>Отзывы</span></span><em>8 800 555-35-35</em></div>
+            <div class="mk-b-h"><span class="mk-b-tag"><i>★</i>4,98 · 312 сданных квартир</span><h6>Квартира, в которую хочется возвращаться</h6><p>Дизайн и ремонт под ключ с фиксированной сметой. Сдаём в срок — или платим неустойку.</p></div>
+            <div class="mk-b-calc"><div class="mk-b-row"><div>Объект<b>Новостройка</b></div><div>Площадь<b>64 м²</b></div><div>Ремонт<b>Под ключ</b></div></div>
+              <div class="mk-b-tot"><div><span>Стоимость под ключ</span><b>≈ 1 920 000 ₽</b></div><em>Получить смету</em></div></div>
+            <div class="mk-b-pr"><div><img src="assets/img/stock/reno-kitchen.jpg" alt="" loading="lazy"><b>ЖК «Символ»</b><span>Кухня-гостиная · 78 м²</span></div><div><img src="assets/img/stock/reno-dining.jpg" alt="" loading="lazy"><b>ЖК «Лайнер»</b><span>Сканди · 54 м²</span></div></div>
+          </div>
+          <div class="ds mk-c">
+            <div class="mk-c-n"><b><i></i>Lexum</b><span class="mk-c-nav"><span>Практики</span><span>Команда</span><span>Кейсы</span><span>Журнал</span></span><span class="mk-c-r">Кабинет<em>Консультация</em></span></div>
+            <div class="mk-c-h"><span class="mk-c-pill"><b>Новое</b> Онлайн-кабинет: статус дела в реальном времени →</span><h6>Защищаем бизнес до того, как спор станет проблемой</h6><p>Арбитраж, договоры и сопровождение сделок. 94% дел выиграно в пользу клиентов за 2025 год.</p>
+              <div class="mk-c-b"><em>Получить консультацию</em><span>Посмотреть практики</span></div></div>
+            <div class="mk-c-app"><div class="mk-c-sb"><b>📁 Мои дела</b><span>📄 Документы</span><span>⏱ Сроки</span><small>КОМАНДА</small><span>● А. Орлов</span><span>● М. Зайцева</span></div>
+              <div class="mk-c-l"><div class="hd"><span>Активные дела · 12</span><span>Ближайший срок: 3 дня</span></div>
+                <div class="mk-c-row"><small>А40-1182</small><i class="p"></i><span>Взыскание задолженности по поставке</span><em>Апелляция</em><u></u></div>
+                <div class="mk-c-row"><small>А40-0974</small><i class="d"></i><span>Спор с арендодателем о расторжении</span><em>Выиграно</em><u></u></div>
+                <div class="mk-c-row"><small>ДГ-312</small><i></i><span>Проверка договора с подрядчиком</span><em>В работе</em><u></u></div>
+              </div>
+              <div class="mk-c-ch"><div class="mk-c-kpi"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#23252a" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="#e8cf9f" stroke-width="4" stroke-linecap="round" stroke-dasharray="88.6 94.2" transform="rotate(-90 18 18)"/></svg><div>Выиграно дел<b>94%</b></div></div>
+                <div>Взыскано для клиентов, млн ₽</div>
+                <div class="mk-c-bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:45%"></i><i style="height:66%"></i><i style="height:74%"></i><i style="height:92%"></i></div>
+                <div class="mk-c-mo"><span>янв</span><span>фев</span><span>мар</span><span>апр</span><span>май</span><span>июн</span></div>
+              </div></div>
+          </div>
+          <div class="ds mk-d">
+            <div class="mk-d-mesh"><i></i><i></i><i></i></div>
+            <div class="mk-d-n"><b>lectio</b><span class="mk-d-nav"><span>Курсы</span><span>Для компаний</span><span>Преподаватели</span><span>Цены</span></span><em>Войти</em></div>
+            <div class="mk-d-h"><div><span class="mk-d-pill">✦ Набор на май открыт</span><h6>Новая профессия <i>за 9 месяцев</i></h6><p>Живые занятия с практиками из IT, проекты в портфолио и помощь с трудоустройством. Оплата частями без переплат.</p><div class="mk-d-btn"><em>Подобрать курс</em><span>Пройти тест ›</span></div>
+                <div class="mk-d-av"><i style="background:#ffcb57"></i><i style="background:#90e0ff"></i><i style="background:#f96bee"></i><i style="background:#533afd"></i><b>12 000+</b> выпускников</div></div>
+              <div class="mk-d-ph"><img src="assets/img/stock/school-hero.jpg" alt="" loading="lazy">
+                <div class="mk-d-card mk-d-c1"><b>UX/UI-дизайнер</b>Модуль 6 из 9<div class="mk-d-bar"><i></i></div></div>
+                <div class="mk-d-card mk-d-c2"><i>✓</i><div>Оффер получен<b>Senior Designer</b></div></div></div></div>
+            <div class="mk-d-f"><div><b>87%</b>находят работу</div><div><b>140 тыс.</b>средняя зарплата</div><div><b>4,9 ★</b>рейтинг курсов</div><div><b>0%</b>рассрочка</div></div>
+          </div>
+          <div class="ds mk-e">
+            <div class="mk-e-top">Бесплатная доставка от 5 000 ₽ · Примерка перед покупкой</div>
+            <div class="mk-e-n"><b>STRIDE</b><span class="mk-e-nav"><span>Новинки</span><span>Мужчинам</span><span>Женщинам</span><span>Детям</span><span class="mk-e-sale">Распродажа</span></span><span><em>Поиск</em>♡ 🛍</span></div>
+            <div class="mk-e-h"><img src="assets/img/stock/shop-hero.jpg" alt="" loading="lazy"><div class="mk-e-tx"><small>Новая коллекция</small><h6>Твой<br>новый шаг</h6><div><em>Купить</em><span>Вся коллекция</span></div></div></div>
+            <div class="mk-e-g">
+              <div><img src="assets/img/stock/shop-1.jpg" alt="" loading="lazy"><b>Stride Canvas</b><small>Кеды</small><strong>5 990 ₽</strong></div>
+              <div><img src="assets/img/stock/shop-2.jpg" alt="" loading="lazy"><b>Stride Gym</b><small>Для зала</small><strong class="mk-e-sale">7 990 ₽</strong></div>
+              <div><img src="assets/img/stock/shop-3.jpg" alt="" loading="lazy"><b>Stride Pulse 3</b><small>Беговые</small><strong>12 990 ₽</strong></div>
+              <div><img src="assets/img/stock/shop-4.jpg" alt="" loading="lazy"><b>Stride Core</b><small>Повседневные</small><strong>9 490 ₽</strong></div>
+            </div>
+          </div>
+        </div></div>
+        <div class="lp-base"></div>
+      </div>
+      <div class="art art-dev" data-d="-40"><small>Адаптивная вёрстка</small><div class="devs"><svg viewBox="0 0 40 28"><rect x="2" y="2" width="36" height="20" rx="2" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M0 25h40" stroke="currentColor" stroke-width="2.5"/></svg><svg viewBox="0 0 22 28"><rect x="2" y="2" width="18" height="24" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg><svg viewBox="0 0 14 28"><rect x="2" y="3" width="10" height="22" rx="2.5" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></div><span>ПК · планшет · телефон</span></div>
+      <div class="art art-speed" data-d="30"><svg viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="none" stroke="#e3e3e3" stroke-width="4"/><circle cx="18" cy="18" r="15" fill="none" stroke="#0c9a4a" stroke-width="4" stroke-linecap="round" stroke-dasharray="92.4 94.2" transform="rotate(-90 18 18)"/><text x="18" y="19" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="700" fill="#0c9a4a">98</text></svg><div><small>Скорость загрузки</small><b>0,9 с</b></div></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- НОВОЕ: скорость = заявки -->
+<section class="sec"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Скорость и SEO</p><h2 class="rv">Быстрые сайты с SEO‑основой — <em>больше заявок без доработок</em></h2></div>
+    <p class="descr fu d2">Собираем сайт на чистом коде без лишних плагинов: загрузка меньше секунды, зелёная зона Core Web Vitals и SEO‑структура с первого дня. Поисковики поднимают сайт выше, посетители не уходят, а вам не нужно ничего переделывать — сайт просто приносит заявки.</p>
+  </div>
+  <div class="speed fu d2" id="speed">
+    <div class="speed-l">
+      <h3>Сравните отчёт Google PageSpeed</h3>
+      <p class="descr">Так выглядит проверка скорости обычного сайта и сайта, который собираем мы. Переключайте, чтобы увидеть разницу.</p>
+      <div class="switch" id="switch" role="tablist">
+        <span class="knob"></span>
+        <button role="tab" data-mode="tpl" class="on" aria-selected="true">Обычный сайт</button>
+        <button role="tab" data-mode="ours" aria-selected="false">Сайт от нас</button>
+      </div>
+      <p class="switch-hint">Пример типичной разницы. Замер вашего сайта сделаем на бесплатном аудите.</p>
+      <ul>
+        <li>Свой код вместо тяжёлой темы и 40 плагинов</li>
+        <li>Сжатые изображения и быстрый хостинг</li>
+        <li>Зелёная зона Core Web Vitals — плюс к позициям в Яндексе и Google</li>
+      </ul>
+    </div>
+    <div class="report">
+      <div class="url"><b>Отчёт Google PageSpeed</b><span id="sp-url">обычный сайт</span><span class="dev">📱 Мобильные</span></div>
+      <div class="gauges" id="gauges"></div>
+      <div class="metrics" id="metrics"></div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 6. Что входит в работу -->
+<section class="sec"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Одна схема: от УТП до заявок и цифр</p><h2 class="rv">Что входит <em>в работу</em></h2></div>
+    <p class="descr fu d2">Не разрозненные этапы. Одна схема: от УТП до заявок и цифр — как часы.</p>
+  </div>
+  <div class="work">
+    <div class="wcard zi" tabindex="0"><img src="assets/img/work-1.png" alt=""><h3>Разбор и анализ рынка</h3><p class="plate">Разбираем продукт, аудиторию и конкурентов. Формулируем предложение и расставляем акценты так, чтобы клиент сразу понимал ценность продукта.</p></div>
+    <div class="wcard zi d1" tabindex="0"><img src="assets/img/work-2.png" alt=""><h3>Структура под путь клиента</h3><p class="plate">Продумываем последовательность блоков и страниц. Каждый элемент отвечает на вопрос клиента, снимает возражение или ведёт к следующему действию.</p></div>
+    <div class="wcard zi d2" tabindex="0"><img src="assets/img/work-3.png" alt=""><h3>Тексты</h3><p class="plate">Пишем заголовки, офферы, преимущества, описания услуг и призывы к действию. Не заполняем пространство текстом — объясняем ценность продукта.</p></div>
+    <div class="wcard zi" tabindex="0"><img src="assets/img/work-4.png" alt=""><h3>Индивидуальный дизайн</h3><p class="plate">Визуальная часть помогает легче воспринимать информацию и усиливает доверие к компании. Продумываем композицию, акценты и детали.</p></div>
+    <div class="wcard zi d1" tabindex="0"><img src="assets/img/work-5.png" alt=""><h3>Сборка сайта + CRM и боты</h3><p class="plate">Собираем адаптивный сайт на WordPress. Подключаем CRM, уведомления в Telegram, email, чат-боты и дополнительные сценарии.</p></div>
+    <div class="wcard zi d2" tabindex="0"><img src="assets/img/work-6.png" alt=""><h3>Аналитика и реклама</h3><p class="plate">Настраиваем цели и основные события. При необходимости запускаем рекламу и продолжаем работу с сайтом на основании данных.</p></div>
+  </div>
+</div></section>
+
+<!-- НОВОЕ: поток заявок по этапам -->
+<section class="sec flow"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Как это работает вживую</p><h2 class="rv">Каждый клиент — на виду, <em>от клика до продажи</em></h2></div>
+    <p class="descr fu d2">Так выглядит система, которую мы собираем. Поток посетителей проходит этапы по очереди: на каждом часть отсеивается, а аналитика показывает, где именно. Поэтому мы точно знаем, что улучшать.</p>
+  </div>
+  <div class="niches fu d2">
+    <span class="niche-lbl">Пример воронки за месяц для ниши:</span>
+    <div class="niche-tabs" id="niches" role="tablist">
+      <button role="tab" class="on" aria-selected="true" data-n="0">Стоматология</button>
+      <button role="tab" aria-selected="false" data-n="1">Ремонт квартир</button>
+      <button role="tab" aria-selected="false" data-n="2">B2B-производство</button>
+      <button role="tab" aria-selected="false" data-n="3">Онлайн-школа</button>
+    </div>
+  </div>
+  <div class="stages fu d2" id="stages">
+    <div class="rail" id="rail"><i></i><b></b></div>
+    <div class="stage"><span class="fs-n">01 / РЕКЛАМА</span><div class="fs-ico"><svg viewBox="0 0 512 512"><path d="M432 64 160 160H64a32 32 0 0 0-32 32v96a32 32 0 0 0 32 32h20l36 116a24 24 0 0 0 23 17h42a24 24 0 0 0 23-31l-30-102h22l272 96zM464 192v96a48 48 0 0 0 0-96z"/></svg></div><b class="fs-num">0</b><span class="fs-lbl">показов рекламы</span><span class="fs-bar" style="--w:100%"><i></i></span><em class="fs-conv"></em></div>
+    <div class="stage"><span class="fs-n">02 / САЙТ</span><div class="fs-ico"><svg viewBox="0 0 512 512"><path d="M0 64v384h512V64zm40 40h24v24H40zm48 0h24v24H88zm48 0h24v24h-24zM40 168h432v240H40zm40 40v64h200v-64zm0 104v24h200v-24zm0 48v24h140v-24zm240-152v152h112V208z" fill-rule="evenodd"/></svg></div><b class="fs-num">0</b><span class="fs-lbl">переходов на сайт</span><span class="fs-bar" style="--w:72%"><i></i></span><em class="fs-conv"></em></div>
+    <div class="stage"><span class="fs-n">03 / ЗАЯВКА</span><div class="fs-ico"><svg viewBox="0 0 512 512"><path d="M96 0h240l112 112v400H64V0zm224 32v96h96zM128 208v32h256v-32zm0 80v32h256v-32zm0 80v32h160v-32z" fill-rule="evenodd"/></svg></div><b class="fs-num">0</b><span class="fs-lbl">заявок</span><span class="fs-bar" style="--w:20%"><i></i></span><em class="fs-conv"></em></div>
+    <div class="stage"><span class="fs-n">04 / CRM</span><div class="fs-ico"><svg viewBox="0 0 512 512"><circle cx="192" cy="144" r="112"/><path d="M0 480c0-106 86-192 192-192s192 86 192 192zM400 176h40v56h56v40h-56v56h-40v-56h-56v-40h56z"/></svg></div><b class="fs-num">0</b><span class="fs-lbl">сделок в CRM</span><span class="fs-bar" style="--w:11%"><i></i></span><em class="fs-conv"></em></div>
+    <div class="stage"><span class="fs-n">05 / ПРОДАЖА</span><div class="fs-ico"><svg viewBox="0 0 512 512"><path d="M32 448h448v40H32zM64 320h72v104H64zm112-80h72v184h-72zm112 48h72v136h-72zm112-160h72v296h-72zM330 48h110v110l-38-38-102 102-56-56-102 102-28-28 130-130 56 56 74-74z"/></svg></div><b class="fs-num">0</b><span class="fs-lbl">продаж</span><span class="fs-bar" style="--w:7%"><i></i></span><em class="fs-conv"></em></div>
+  </div>
+  <p class="flow-sum" id="fsum"></p>
+  <p class="flow-note">Цифры — типичные показатели по нише на основе средних значений рынка, не результат конкретного клиента. Реальный прогноз для вашего бизнеса посчитаем на бесплатном разборе.</p>
+</div></section>
+
+<!-- 7. Кейсы -->
+<section class="sec" id="cases"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Портфолио</p><h2 class="rv">Проекты, которые работают <em>на результат</em></h2></div>
+    <p class="descr fu d2">Каждый сайт проектируем под конкретное действие пользователя — заявку, запись, покупку или обращение — и продвигаем его. Ниже — что это дало бизнесу клиентов.</p>
+  </div>
+  <a class="case" href="#">
+    <p class="cat fu">/ Сеть ресторанов</p>
+    <div class="img fu"><img src="assets/img/case-aroma.jpg" alt="Сайт ресторана AROMA"></div>
+    <div class="meta fu"><div><h3>AROMA</h3><p>Сайт ресторана с атмосферной подачей, меню и прямым переходом к бронированию. Подключили рекламу на поиске и картах и онлайн-бронь в CRM.</p></div><div class="chips"><span><b>+42%</b> броней онлайн</span><span><b>×2</b> звонков из Карт</span></div></div>
+  </a>
+  <div class="cases-2">
+    <a class="case" href="#"><p class="cat fu">/ B2B сайт</p><div class="img fu"><img src="assets/img/case-woodprime.png" alt="Сайт Woodprime"></div><div class="meta fu"><div><h3>Woodprime</h3><p>Сайт производителя пиломатериалов с калькулятором и быстрым запросом цены. Запустили Директ на оптовые запросы.</p></div><div class="chips"><span><b>+65%</b> B2B-заявок</span><span><b>−30%</b> цена заявки</span></div></div></a>
+    <a class="case" href="#"><p class="cat fu">/ Личный бренд</p><div class="img fu d1"><img src="assets/img/case-expert.png" alt="Сайт эксперта"></div><div class="meta fu d1"><div><h3>Эксперт / блогер</h3><p>Сайт личного бренда, который собирает экспертность, аудиторию и продукты. Связали с соцсетями и рассылкой.</p></div><div class="chips"><span><b>+3 200</b> подписчиков</span><span><b>+48%</b> продаж консультаций</span></div></div></a>
+    <a class="case" href="#"><p class="cat fu">/ Онлайн школа</p><div class="img fu"><img src="assets/img/case-school.png" alt="Лендинг онлайн-курса"></div><div class="meta fu"><div><h3>Онлайн-школа / курс</h3><p>Лендинг курса с понятной программой и маршрутом до записи. Настроили рекламу и цепочку дожима в боте.</p></div><div class="chips"><span><b>×1,8</b> записей на курс</span><span><b>+27%</b> выручки</span></div></div></a>
+    <a class="case" href="#"><p class="cat fu">/ Стоматология</p><div class="img fu d1"><img src="assets/img/case-dentex.png" alt="Сайт Dentex Solutions"></div><div class="meta fu d1"><div><h3>Dentex Solutions</h3><p>Корпоративный B2B-сайт: от оборудования до сервисного сопровождения клиник. Вывели в топ по ключевым запросам.</p></div><div class="chips"><span><b>+120%</b> органического трафика</span><span><b>+35%</b> обращений</span></div></div></a>
+  </div>
+</div></section>
+
+<!-- НОВОЕ: манифест -->
+<section class="sec" id="why"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Почему WordPress</p><h2 class="rv">Самая популярная платформа <em>для сайтов в мире</em></h2></div>
+    <p class="descr fu d2">WordPress в 2026 году — это не «движок для блогов», а открытая платформа с ИИ в ядре, визуальным редактором и тысячами готовых интеграций. А сайт на ней полностью принадлежит вам.</p>
+  </div>
+  <div class="why-grid">
+    <div class="share fu">
+      <div class="share-top">
+        <b><span data-count="43">43</span><small>%</small></b>
+        <p><strong>всех сайтов в мире</strong> работают на WordPress. Среди сайтов на CMS — почти 60%.</p>
+      </div>
+      <div class="cms" id="cms" role="img" aria-label="Доля сайтов на разных CMS: WordPress 43%, Shopify 4,7%, Wix 4%, Squarespace около 2%, Joomla около 1,5%">
+        <div class="cms-row wp" data-v="43"><span>WordPress</span><div class="cms-bar"></div><b>43%</b></div>
+        <div class="cms-row" data-v="5"><span>Shopify</span><div class="cms-bar"></div><b>4,7%</b></div>
+        <div class="cms-row" data-v="4"><span>Wix</span><div class="cms-bar"></div><b>4%</b></div>
+        <div class="cms-row" data-v="2"><span>Squarespace</span><div class="cms-bar"></div><b>≈2%</b></div>
+        <div class="cms-row" data-v="2"><span>Joomla</span><div class="cms-bar"></div><b>≈1,5%</b></div>
+      </div>
+      <p class="share-src">Доля от всех сайтов в интернете. Источник: W3Techs, 2026.</p>
+    </div>
+    <div class="feats">
+      <div class="feat fu"><div class="fn">01<span class="badge">WordPress 7.0</span></div><h3>ИИ встроен в ядро</h3><p>Генерация текстов, заголовков, описаний и alt-текстов для картинок прямо в админке. Подключаете ИИ-сервис в пару кликов — и наполнение сайта идёт в разы быстрее.</p></div>
+      <div class="feat fu d1"><div class="fn">02<span class="badge">Abilities API · MCP</span></div><h3>Готов к ИИ-агентам</h3><p>ИИ-ассистенты вроде Claude или ChatGPT могут по вашей команде работать с сайтом: обновлять каталог, публиковать новости, готовить отчёты — в рамках заданных прав.</p></div>
+      <div class="feat fu"><div class="fn">03</div><h3>Визуальный редактор</h3><p>Страницы собираются из блоков, правки видны сразу — как в конструкторе. Менять тексты, цены и баннеры можно без программиста.</p></div>
+      <div class="feat fu d1"><div class="fn">04</div><h3>Сайт принадлежит вам</h3><p>Открытый код, без абонентской платы платформе. Сайт можно перенести на любой хостинг, а права и доступы всегда остаются у вас.</p></div>
+      <div class="feat fu"><div class="fn">05</div><h3>SEO и скорость</h3><p>Полный контроль над кодом, адресами и метатегами. Лёгкая тема и минимум плагинов дают зелёную зону Core Web Vitals.</p></div>
+      <div class="feat fu d1"><div class="fn">06<span class="badge">60 000+ плагинов</span></div><h3>Растёт вместе с бизнесом</h3><p>Магазин на WooCommerce, CRM, 1С, оплата, мультиязычность — функции подключаются по мере роста, без переделки сайта с нуля.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<!-- 8. Как мы работаем -->
+<section class="sec"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Как мы работаем</p><h2 class="rv">От задачи бизнеса <em>до запуска и цифр</em></h2></div>
+    <p class="descr fu d2">Работаем как партнёр по продвижению, а не как отдельный подрядчик по сайту. Сайт, реклама, CRM, чат-боты и аналитика — одна система, которую оцениваем по заявкам, стоимости обращения и конверсии.</p>
+  </div>
+  <div class="steps">
+    <div class="st fu"><h3>Разбираемся в бизнесе</h3><p>Погружаемся в продукт, аудиторию и продажи. Определяем задачу сайта, ключевые сценарии и метрики результата.</p><svg class="sq" viewBox="0 0 19 19" fill="none" role="img" aria-label="Этап 1 из 4"><rect x="3" y="3" width="6" height="6" class="r"></rect><rect x="10" y="3" width="6" height="6" fill="#D8D8D8"></rect><rect x="3" y="10" width="6" height="6" fill="#D8D8D8"></rect><rect x="10" y="10" width="6" height="6" fill="#D8D8D8"></rect></svg></div>
+    <div class="st fu"><h3>Проектируем структуру и оффер</h3><p>Выстраиваем путь пользователя до целевого действия. Формируем оффер, структуру и тексты под задачи бизнеса и будущий трафик.</p><svg class="sq" viewBox="0 0 19 19" fill="none" role="img" aria-label="Этап 2 из 4"><rect x="3" y="3" width="6" height="6" class="r"></rect><rect x="10" y="3" width="6" height="6" class="r"></rect><rect x="3" y="10" width="6" height="6" fill="#D8D8D8"></rect><rect x="10" y="10" width="6" height="6" fill="#D8D8D8"></rect></svg></div>
+    <div class="st fu"><h3>Собираем сайт и систему</h3><p>Создаём дизайн, собираем сайт на WordPress и подключаем формы, CRM, уведомления, чат-боты и интеграции.</p><svg class="sq" viewBox="0 0 19 19" fill="none" role="img" aria-label="Этап 3 из 4"><rect x="3" y="3" width="6" height="6" class="r"></rect><rect x="10" y="3" width="6" height="6" class="r"></rect><rect x="3" y="10" width="6" height="6" class="r"></rect><rect x="10" y="10" width="6" height="6" fill="#D8D8D8"></rect></svg></div>
+    <div class="st fu"><h3>Запускаем и держим результат под контролем</h3><p>Настраиваем аналитику и продвижение. Смотрим на заявки, их стоимость и точки потерь — и меняем то, что не даёт результат.</p><svg class="sq" viewBox="0 0 19 19" fill="none" role="img" aria-label="Этап 4 из 4"><rect x="3" y="3" width="6" height="6" class="r"></rect><rect x="10" y="3" width="6" height="6" class="r"></rect><rect x="3" y="10" width="6" height="6" class="r"></rect><rect x="10" y="10" width="6" height="6" class="r"></rect></svg></div>
+  </div>
+</div></section>
+
+<!-- 9. Тарифы -->
+<section class="sec" id="prices"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Пакеты</p><h2 class="rv">Тарифы под <em>вашу задачу</em></h2></div>
+    <p class="descr fu d2">От лендинга до системы продаж. Без скрытых доплат — стоимость определяем после короткого разбора задачи.</p>
+  </div>
+  <div class="price-grid">
+    <div class="price-card fu"><p class="price-card__index">01 &nbsp;/&nbsp; Лендинг</p><h3 class="price-card__name">Лендинг</h3><p class="price-card__tagline">Один продукт — одно предложение. Готов принимать трафик и превращать его в заявки.</p>
+      <ul class="price-features"><li><span class="price-check" data-ck></span>УТП, структура и оффер</li><li><span class="price-check" data-ck></span>Продающие тексты</li><li><span class="price-check" data-ck></span>Дизайн и сборка на WordPress</li><li><span class="price-check" data-ck></span>CRM, формы, цели под рекламу</li></ul>
+      <a class="price-btn" href="#contacts">Оставить заявку <span class="price-btn__arrow" data-ar></span></a></div>
+    <div class="price-card fu d1"><p class="price-card__index">02 &nbsp;/&nbsp; Сайт услуг</p><h3 class="price-card__name">Сайт услуг</h3><p class="price-card__tagline">Несколько направлений, кейсы, чёткая навигация до заявки.</p>
+      <ul class="price-features"><li><span class="price-check" data-ck></span>Всё из пакета «Лендинг»</li><li><span class="price-check" data-ck></span>Отдельные страницы под услуги</li><li><span class="price-check" data-ck></span>Кейсы и блок доверия</li><li><span class="price-check" data-ck></span>Базовая SEO-структура</li></ul>
+      <a class="price-btn" href="#contacts">Оставить заявку <span class="price-btn__arrow" data-ar></span></a></div>
+    <div class="price-card price-card--partner fu d2"><span class="price-partner-badge">Партнёрство</span><p class="price-card__index">03 &nbsp;/&nbsp; Система продаж</p><h3 class="price-card__name">Система продаж</h3><p class="price-card__tagline">Сайт, реклама, CRM, чат-боты и аналитика работают как единая система продаж.</p>
+      <ul class="price-features"><li><span class="price-check" data-ckd></span>Всё из пакета «Лендинг»</li><li><span class="price-check" data-ckd></span>Запуск рекламы и настройка целей</li><li><span class="price-check" data-ckd></span>CRM, боты и прозрачная воронка продаж</li><li><span class="price-check" data-ckd></span>Контроль заявок, стоимости лида и конверсии</li></ul>
+      <a class="price-btn price-btn--outline" href="#contacts">Обсудить партнёрство <span class="price-btn__arrow" data-ar></span></a></div>
+  </div>
+</div></section>
+
+<!-- 10. Отзывы -->
+<section class="sec"><div class="wrap">
+  <div class="head"><div><p class="eyebrow fu">Отзывы</p><h2 class="rv">Что о нас говорят <em>наши клиенты</em></h2></div></div>
+  <div class="slider fu" id="slider">
+    <button class="arrow l" aria-label="Предыдущий отзыв"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 3L5 9l6 6"/></svg></button>
+    <div class="slides"></div>
+    <button class="arrow r" aria-label="Следующий отзыв"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 3l6 6-6 6"/></svg></button>
+    <div class="dots"></div>
+  </div>
+</div></section>
+
+<!-- 11. Контакты -->
+<section class="sec" id="contacts"><div class="wrap">
+  <div class="head">
+    <div><p class="eyebrow fu">Контакты</p><h2 class="rv">Обсудим <em>ваш проект</em></h2></div>
+    <p class="descr fu d2">Расскажите, какой сайт нужен и какую задачу он должен решать.<br>Посмотрим на проект целиком: от структуры до рекламы, CRM и аналитики.</p>
+  </div>
+  <div class="channels">
+    <a class="ch fu" href="tel:+7"><i class="mi i-tel"></i><b>Позвонить</b><small>+7</small></a>
+    <a class="ch fu d1" href="mailto:hello@studio.com"><i class="mi i-mail"></i><b>Написать на эл. почту</b><small>hello@studio.com</small></a>
+    <a class="ch fu d2" href="https://t.me/advgid"><i class="mi i-tg"></i><b>Написать в Телеграм</b><small>@advgid</small></a>
+    <a class="ch out fu d3" href="#form"><i class="mi i-web"></i><b>Оставить заявку на сайте</b></a>
+  </div>
+  <div class="form-wrap">
+    <div>
+      <h3 class="fu">Расскажите о проекте — предложим подходящий формат</h3>
+      <p class="descr fu d1">Коротко опишите задачу: что нужно разработать, есть ли действующий сайт и планируется ли продвижение.<br>Мы посмотрим на проект и предложим следующий шаг — без лишних презентаций и длинных созвонов.</p>
+      <form id="form" class="fu d2" novalidate>
+        <div class="f"><input id="f1" placeholder=" " required><label for="f1">Ваше имя</label></div>
+        <div class="f"><input id="f2" type="tel" placeholder=" " required><label for="f2">+7 (000) 000-00-00</label></div>
+        <div class="f"><input id="f3" type="email" placeholder=" "><label for="f3">Email</label></div>
+        <div class="f"><textarea id="f4" rows="1" placeholder=" "></textarea><label for="f4">Расскажите о задаче</label></div>
+        <label class="agree"><input type="checkbox" required> Согласен(на) на обработку персональных данных в соответствии с Политикой конфиденциальности</label>
+        <button class="btn btn-red" type="submit">Отправить <i class="mi i-arrow"></i></button>
+        <div class="sent"><h3>Спасибо! Заявка отправлена</h3><p class="descr" style="margin:12px 0 0">Свяжемся с вами в ближайшее время.</p></div>
+      </form>
+    </div>
+    <div class="form-img zi d2"><img src="assets/img/contact.png" alt="Разработчик за работой"></div>
+  </div>
+</div></section>
+
+<!-- 12. FAQ -->
+<section class="sec"><div class="wrap">
+  <div class="head" style="margin-bottom:56px"><div><p class="eyebrow fu">FAQ</p><h2 class="rv">Ответы на часто <em>задаваемые вопросы</em></h2></div></div>
+  <div id="faq"></div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="foot">
+    <div><a class="logo" href="#">Разработка сайтов на WordPress</a><br><a class="btn btn-red" href="#contacts">Обсудить проект <i class="mi i-arrow"></i></a></div>
+    <div><h4>Страницы</h4><ul><li><a href="#services">Услуги</a></li><li><a href="#cases">Кейсы</a></li><li><a href="#prices">Цены</a></li><li><a href="#contacts">Контакты</a></li></ul></div>
+    <div><h4>Документы</h4><ul><li><a href="#">Политика конфиденциальности</a></li><li><a href="#">Согласие на обработку ПД</a></li></ul></div>
+    <div><h4 style="color:#efefef;font-weight:500">Свяжитесь с нами</h4>
+      <div class="soc">
+        <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
+        <a href="tel:+7" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:hello@studio.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+      </div>
+      <u>hello@studio.com</u><span style="font-weight:500">9:00-20:00 ежедневно</span></div>
+  </div>
+</div></footer>
+
+</div>
+<script>
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* Плавное появление страницы и полоса загрузки сверху (как T360 в Tilda) */
+(() => {
+  const page = document.getElementById("page");
+  setTimeout(() => page.classList.add("page-on"), 200);
+  addEventListener("pageshow", (e) => { if (e.persisted) page.classList.add("page-on"); });
+  const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
+  if (isSafari) return;
+  document.body.insertAdjacentHTML("beforeend", '<div class="t360__progress"><div class="t360__bar"></div></div>');
+  const bar = document.querySelector(".t360__bar");
+  setTimeout(() => bar.classList.add("t360__barprogress"), 10);
+  const done = () => {
+    bar.classList.remove("t360__barprogress"); bar.classList.add("t360__barprogressfinished");
+    setTimeout(() => bar.classList.add("t360__barprogresshidden"), 20);
+    setTimeout(() => (bar.parentElement.style.display = "none"), 500);
+  };
+  if (document.readyState === "complete") setTimeout(done, 60); else addEventListener("load", done);
+})();
+
+/* SVG-иконки (исходники в assets/icons) встроены, чтобы менять цвет при наведении */
+const ICONS = {"arrow": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M18.3311 11.3252C18.6431 11.6376 18.6434 12.1437 18.3311 12.4561L12.8301 17.957L11.6992 16.8262L15.7256 12.7998H6V11.2002H15.9443L11.6992 6.95508L12.2646 6.38965L12.8301 5.82324L18.3311 11.3252Z\" fill=\"currentColor\"/> </svg>", "tel": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 480.56 480.56\" style=\"enable-background:new 0 0 480.56 480.56;\" xml:space=\"preserve\"> <g> <g> <path d=\"M365.354,317.9c-15.7-15.5-35.3-15.5-50.9,0c-11.9,11.8-23.8,23.6-35.5,35.6c-3.2,3.3-5.9,4-9.8,1.8 c-7.7-4.2-15.9-7.6-23.3-12.2c-34.5-21.7-63.4-49.6-89-81c-12.7-15.6-24-32.3-31.9-51.1c-1.6-3.8-1.3-6.3,1.8-9.4 c11.9-11.5,23.5-23.3,35.2-35.1c16.3-16.4,16.3-35.6-0.1-52.1c-9.3-9.4-18.6-18.6-27.9-28c-9.6-9.6-19.1-19.3-28.8-28.8 c-15.7-15.3-35.3-15.3-50.9,0.1c-12,11.8-23.5,23.9-35.7,35.5c-11.3,10.7-17,23.8-18.2,39.1c-1.9,24.9,4.2,48.4,12.8,71.3 c17.6,47.4,44.4,89.5,76.9,128.1c43.9,52.2,96.3,93.5,157.6,123.3c27.6,13.4,56.2,23.7,87.3,25.4c21.4,1.2,40-4.2,54.9-20.9 c10.2-11.4,21.7-21.8,32.5-32.7c16-16.2,16.1-35.8,0.2-51.8C403.554,355.9,384.454,336.9,365.354,317.9z\"></path> <path d=\"M346.254,238.2l36.9-6.3c-5.8-33.9-21.8-64.6-46.1-89c-25.7-25.7-58.2-41.9-94-46.9l-5.2,37.1 c27.7,3.9,52.9,16.4,72.8,36.3C329.454,188.2,341.754,212,346.254,238.2z\"></path> <path d=\"M403.954,77.8c-42.6-42.6-96.5-69.5-156-77.8l-5.2,37.1c51.4,7.2,98,30.5,134.8,67.2c34.9,34.9,57.8,79,66.1,127.5 l36.9-6.3C470.854,169.3,444.354,118.3,403.954,77.8z\"></path> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>", "mail": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_2\" viewBox=\"0 0 512 512\"><g><path d=\"m0 403.7 156.7-151.6-156.7-138.7z\"></path><path d=\"m512 406v-290l-156.5 138.6z\"></path><path d=\"m497 86.8c-.3 0-.6 0-.9 0h-478.1l228.1 201.9c.4.3.8.7 1.2 1 .1.1.2.1.3.2.3.2.6.4 1 .6.1.1.2.1.3.2.3.2.7.4 1 .5.1 0 .2.1.3.1.4.2.8.3 1.1.5.1 0 .2.1.2.1.4.2.8.3 1.3.4h.2c.5.1 1 .2 1.4.3 1 .2 2 .3 3 .3.4 0 .8 0 1.1-.1.2 0 .4 0 .7-.1.3 0 .5-.1.8-.1.2 0 .4-.1.7-.1.3-.1.6-.1.9-.2.2 0 .3-.1.5-.1.4-.1.7-.2 1.1-.3.1 0 .2-.1.3-.1.4-.1.8-.3 1.2-.5.1 0 .2-.1.2-.1.4-.2.8-.4 1.2-.6.1 0 .1-.1.2-.1.4-.2.7-.5 1.1-.7.1-.1.1-.1.2-.1.4-.3.8-.6 1.2-1z\"></path><path d=\"m486.1 425.3-154.5-149.5-41.6 36.7c-8.4 7.5-19.3 11.8-30.5 12.3-2.1.1-4.2 0-6.4-.1-10.5-.9-20.2-5.1-28.2-12.1l-44.3-39.2-157.1 152h462.6z\"></path></g></svg>", "tg": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_2\" viewBox=\"0 0 32 32\"><g><path d=\"m2.61743 15.83185 6.44043 2.18732 15.29034-9.34778c.22162-.13556.44873.16547.25757.34143l-11.57592 10.65509-.43048 5.96521c-.03278.4538.51385.70642.83826.38745l3.56421-3.50482 6.51569 4.93243c.70233.53174 1.7193.15698 1.90875-.70331l4.53692-20.59997c.25879-1.17517-.8927-2.16681-2.01648-1.73645l-25.36206 9.71179c-.7956.30469-.77393 1.43768.03277 1.71161z\"></path></g></svg>", "web": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" viewBox=\"0 0 512 512\"><path clip-rule=\"evenodd\" d=\"m256 18.456c131.192 0 237.544 106.352 237.544 237.544s-106.352 237.544-237.544 237.544-237.544-106.352-237.544-237.544 106.352-237.544 237.544-237.544zm64.678 377.505c32.104-14.89 58.237-40.516 73.819-72.236h-50.998c-1.595 8.396-3.436 16.641-5.603 24.702-4.54 17.201-10.388 33.224-17.218 47.534zm-97.661 10.674c10.633 2.323 21.675 3.562 33.003 3.562 11.288 0 22.33-1.239 32.963-3.562 14.191-21.659 24.988-50.475 31.49-82.91h-128.947c6.503 32.427 17.3 61.251 31.491 82.91zm-105.514-82.91c15.582 31.72 41.715 57.337 73.819 72.236-6.83-14.31-12.678-30.333-17.217-47.534-2.168-8.061-4.008-16.306-5.603-24.702zm68.666-205.183c-29.732 15.173-53.943 39.723-68.666 69.725h49.485c4.09-25.242 10.593-48.905 19.181-69.725zm109.153-11.647c-12.556-3.317-25.724-5.092-39.302-5.092-13.619 0-26.787 1.775-39.343 5.092-12.392 22.432-21.553 50.475-26.869 81.372h132.383c-5.316-30.898-14.477-58.94-26.869-81.372zm99.175 81.372c-14.723-30.006-38.933-54.561-68.665-69.725 8.588 20.82 15.091 44.483 19.18 69.725zm-209.964 63.214c0 16.956 1.145 33.65 3.272 49.714h136.391c2.127-16.065 3.272-32.759 3.272-49.714 0-13.799-.736-27.425-2.168-40.684h-138.599c-1.432 13.259-2.168 26.885-2.168 40.684zm-81.916 20.371c1.022 10.102 3.067 19.917 5.971 29.344h56.437c-2.004-16.117-3.026-32.726-3.026-49.714 0-13.758.695-27.376 2.045-40.684h-55.456c-2.903 9.435-4.948 19.25-5.971 29.347 0 .078 0 .147-.041.225-.245 2.487-.409 4.993-.572 7.508v.646c-.041.986-.082 1.971-.123 2.957 0 .311 0 .626-.041.936 0 1.19-.041 2.388-.041 3.583 0 1.198.041 2.392.041 3.582.041.311.041.63.041.937.041.986.082 1.971.123 2.957v.642c.164 2.519.327 5.026.572 7.513.041.077.041.147.041.221zm307.543-12.269c0-1.19.041-2.384.041-3.582 0-1.194-.041-2.392-.041-3.583 0-.311-.041-.626-.041-.936 0-.986-.041-1.971-.123-2.957 0-.213 0-.43 0-.646-.164-2.515-.327-5.022-.573-7.508-.041-.078-.041-.147-.041-.225-1.022-10.097-3.067-19.913-5.971-29.347h-55.456c1.35 13.308 2.045 26.926 2.045 40.684 0 16.988-1.022 33.597-3.026 49.714h56.437c2.904-9.427 4.949-19.242 5.971-29.344 0-.074 0-.143.041-.221.245-2.487.409-4.994.573-7.513 0-.213 0-.429 0-.642.082-.986.123-1.971.123-2.957 0-.308.041-.626.041-.937zm21.062 19.442c.164-1.022.286-2.049.368-3.076.041-.388.123-.777.164-1.157.082-.859.164-1.717.245-2.568.041-.573.082-1.141.123-1.706.082-.74.123-1.484.163-2.225.082-.703.123-1.415.164-2.127 0-.634.041-1.268.082-1.906.041-.867.082-1.734.082-2.605.041-.503.041-1.002.082-1.501 0-1.386.041-2.769.041-4.155s-.041-2.773-.041-4.155c-.041-.499-.041-.998-.082-1.497 0-.867-.041-1.742-.082-2.613-.041-.634-.082-1.268-.082-1.893-.041-.72-.082-1.431-.164-2.143-.041-.736-.082-1.468-.163-2.2-.041-.581-.082-1.149-.123-1.726-.082-.855-.163-1.705-.245-2.556-.041-.389-.123-.781-.164-1.178-.082-1.018-.204-2.032-.368-3.055 0-.086 0-.168 0-.253-5.03-38.386-22.411-73.864-50.262-101.69-33.372-33.384-77.745-51.767-124.94-51.767-47.236 0-91.609 18.383-124.98 51.767-27.81 27.826-45.232 63.296-50.262 101.678v.274c-.164 1.014-.286 2.028-.368 3.039-.041.397-.082.797-.123 1.19-.123.846-.204 1.697-.286 2.552-.041.569-.082 1.145-.123 1.726-.082.732-.123 1.464-.164 2.2-.041.712-.082 1.423-.164 2.143 0 .626-.041 1.26-.082 1.893-.041.871-.082 1.747-.082 2.613-.041.499-.041.998-.082 1.497 0 1.382-.041 2.769-.041 4.155 0 1.387.041 2.769.041 4.155.041.499.041.998.082 1.501 0 .871.041 1.738.082 2.605.041.638.082 1.272.082 1.906.082.712.123 1.423.164 2.127.041.741.082 1.485.164 2.225.041.564.082 1.133.123 1.698.082.859.163 1.717.286 2.576.041.389.082.769.123 1.157.082 1.027.204 2.053.368 3.076v.225c5.03 38.394 22.411 73.88 50.262 101.715 33.372 33.38 77.745 51.763 124.98 51.763 47.195 0 91.568-18.383 124.94-51.763 27.851-27.834 45.232-63.329 50.262-101.723 0-.071 0-.14 0-.218z\" fill-rule=\"evenodd\"></path></svg>", "burger": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M4.04688 16.1855V18.1855H20V16.1855H4.04688ZM4.04688 12.8682H20V10.8682H4.04688V12.8682ZM4.04688 7.5498H20V5.5498H4.04688V7.5498Z\" fill=\"currentColor\"/> </svg>"};
+[["i-arrow","arrow"],["i-tel","tel"],["i-mail","mail"],["i-tg","tg"],["i-web","web"],["i-burger","burger"]].forEach(([cls, k]) => document.querySelectorAll("." + cls).forEach((e) => (e.innerHTML = ICONS[k])));
+
+/* Иконки блока тарифов */
+const CK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.25" stroke="#cf040e" stroke-width="1.5"></circle><path d="M5 8.2L7.1 10.4L11 6" stroke="#cf040e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+const CKD = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7.25" stroke="rgba(255,255,255,0.45)" stroke-width="1.5"></circle><path d="M5 8.2L7.1 10.4L11 6" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+const AR = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3.75 9H14.25M14.25 9L10.5 5.25M14.25 9L10.5 12.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+document.querySelectorAll("[data-ck]").forEach((e) => (e.innerHTML = CK));
+document.querySelectorAll("[data-ckd]").forEach((e) => (e.innerHTML = CKD));
+document.querySelectorAll("[data-ar]").forEach((e) => (e.innerHTML = AR));
+
+/* Меню */
+const nav = document.getElementById("nav");
+const onScrollNav = () => nav.classList.toggle("scrolled", scrollY > 700);
+addEventListener("scroll", onScrollNav, { passive: true }); onScrollNav();
+const mm = document.getElementById("mmenu");
+document.getElementById("burger").onclick = () => { mm.classList.add("open"); mm.setAttribute("aria-hidden", "false"); };
+document.getElementById("mm-bg").onclick = () => mm.classList.remove("open");
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") mm.classList.remove("open"); });
+document.getElementById("mclose").onclick = () => mm.classList.remove("open");
+mm.querySelectorAll("a").forEach((a) => (a.onclick = () => mm.classList.remove("open")));
+
+/* «Как работаем мы»: наведение — скриншот, клик по «i» — подсказка с текстом */
+const closeTips = () => document.querySelectorAll(".row.tip-on").forEach((o) => { o.classList.remove("tip-on"); o.querySelector(".info").setAttribute("aria-expanded", "false"); });
+document.querySelectorAll(".row.hv").forEach((r) => {
+  r.addEventListener("mouseenter", () => r.classList.add("hov"));
+  r.addEventListener("mouseleave", () => r.classList.remove("hov"));
+  const b = r.querySelector(".info");
+  b.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const on = !r.classList.contains("tip-on");
+    closeTips();
+    r.classList.toggle("tip-on", on); b.setAttribute("aria-expanded", on);
+  });
+});
+document.addEventListener("click", closeTips);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeTips(); });
+
+/* Счётчики */
+const cio = new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return;
+  const el = e.target, end = +el.dataset.count; cio.unobserve(el);
+  if (reduce) return;
+  const t0 = performance.now();
+  const step = (t) => { const p = Math.min((t - t0) / 1600, 1); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}), { threshold: .6 });
+document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
+
+/* Витрина дизайнов: на десктопе экраны сменяются прокруткой, на мобильных — свайпом и стрелками */
+(() => {
+  const box = document.getElementById("show"), imgs = [...document.querySelectorAll("#lp-view .ds")];
+  const cats = [...document.querySelectorAll("#show-cat span")], prog = [...document.querySelectorAll("#show-prog i")];
+  const num = document.getElementById("show-n"), arts = [...box.querySelectorAll(".art")];
+  const scene = box.querySelector(".show-scene"), n = imgs.length;
+  let cur = 0, timer;
+  const go = (k) => {
+    k = (k + n) % n;
+    if (k === cur) return;
+    // текущий экран уходит «под» новый, остальные полностью скрыты — порядок не зависит от направления прокрутки
+    imgs.forEach((im, i) => { im.classList.remove("on", "under"); im.style.zIndex = i === cur ? 1 : 0; });
+    imgs[cur].classList.add("under");
+    imgs[k].style.zIndex = 2; void imgs[k].offsetWidth; imgs[k].classList.add("on");
+    cats.forEach((c, i) => { c.classList.toggle("on", i === k); c.classList.toggle("out", i < k); });
+    prog.forEach((p, i) => p.classList.toggle("on", i <= k));
+    num.textContent = String(k + 1).padStart(2, "0");
+    cur = k;
+  };
+  const mobile = () => matchMedia("(max-width:1199px)").matches;
+  const upd = () => {
+    if (mobile()) return;
+    const r = box.getBoundingClientRect(), span = r.height - innerHeight;
+    const p = Math.min(Math.max(-r.top / span, 0), .999);
+    go(Math.floor(p * n));
+    if (!reduce) arts.forEach((a) => (a.style.translate = `0 ${(p - .5) * +a.dataset.d}px`));
+  };
+  addEventListener("scroll", upd, { passive: true }); addEventListener("resize", upd); upd();
+
+  // мобильные: ручное переключение; автопрокрутка останавливается после первого касания
+  const restart = () => { clearInterval(timer); if (!reduce) timer = setInterval(() => { if (mobile()) go(cur + 1); }, 4500); };
+  const manual = (k) => { go(k); restart(); };
+  document.getElementById("show-prev").addEventListener("click", () => manual(cur - 1));
+  document.getElementById("show-next").addEventListener("click", () => manual(cur + 1));
+  prog.forEach((p, i) => p.addEventListener("click", () => { if (mobile()) manual(i); }));
+  let x0 = null, y0 = null;
+  scene.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  scene.addEventListener("touchend", (e) => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) manual(cur + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  restart();
+})();
+
+/* Заголовки и манифест: слова проявляются при прокрутке, акценты — красным */
+(() => {
+  const els = [...document.querySelectorAll(".rv")];
+  els.forEach((el) => {
+    const wrap = (node, acc) => {
+      [...node.childNodes].forEach((n) => {
+        if (n.nodeType === 3) {
+          const frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach((part) => {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            const s = document.createElement("span"); s.className = "w" + (acc ? " acc" : ""); s.textContent = part; frag.appendChild(s);
+          });
+          n.replaceWith(frag);
+        } else if (n.nodeType === 1) wrap(n, acc || n.tagName === "EM");
+      });
+    };
+    wrap(el, false);
+    el._w = [...el.querySelectorAll(".w")];
+  });
+  if (reduce) { els.forEach((el) => el._w.forEach((w) => w.classList.add("on"))); return; }
+  const upd = () => els.forEach((el) => {
+    const r = el.getBoundingClientRect();
+    if (r.top > innerHeight || r.bottom < -200) return;
+    const span = innerHeight * .45;
+    const p = Math.min(Math.max((innerHeight * .9 - r.top) / span, 0), 1);
+    const n = Math.round(p * el._w.length);
+    el._w.forEach((w, i) => w.classList.toggle("on", i < n));
+  });
+  addEventListener("scroll", upd, { passive: true }); addEventListener("resize", upd); upd();
+})();
+
+/* Таймер акции */
+(() => {
+  const DURATION = 15 * 60;
+  const minEl = document.getElementById("promo-min"), secEl = document.getElementById("promo-sec"), barEl = document.getElementById("promo-bar");
+  let remaining = DURATION;
+  const pad = (n) => (n < 10 ? "0" + n : "" + n);
+  const flip = (el, v) => { el.classList.add("promo__timer-num--flip"); setTimeout(() => { el.textContent = v; el.classList.remove("promo__timer-num--flip"); }, 150); };
+  const tick = () => {
+    if (remaining <= 0) remaining = DURATION;
+    const m = pad(Math.floor(remaining / 60)), s = pad(remaining % 60);
+    if (secEl.textContent !== s) flip(secEl, s);
+    if (minEl.textContent !== m) flip(minEl, m);
+    barEl.style.transform = "scaleX(" + remaining / DURATION + ")";
+    remaining--;
+  };
+  tick(); setInterval(tick, 1000);
+})();
+
+/* НОВОЕ: отчёт PageSpeed — шаблон против нашего сайта */
+(() => {
+  const data = {
+    tpl:  { url: "обычный сайт", g: [31, 72, 67, 78], m: [["Первый контент (FCP)", "4,1 с"], ["Основной контент (LCP)", "7,8 с"], ["Блокировка (TBT)", "1 340 мс"], ["Сдвиг макета (CLS)", "0,31"]],
+            verdict: "⚠ Медленно: больше половины посетителей с телефона уходят, не дождавшись загрузки" },
+    ours: { url: "сайт от нас", g: [98, 96, 100, 100], m: [["Первый контент (FCP)", "0,7 с"], ["Основной контент (LCP)", "0,9 с"], ["Блокировка (TBT)", "20 мс"], ["Сдвиг макета (CLS)", "0"]],
+            verdict: "✓ Быстро: сайт открывается мгновенно и не теряет клиентов с рекламы" },
+  };
+  const names = ["Производительность", "Доступность", "Рекомендации", "SEO"];
+  const col = (v) => (v >= 90 ? "#0c9a4a" : v >= 50 ? "#e67700" : "#cf040e");
+  const G = document.getElementById("gauges"), M = document.getElementById("metrics"), V = document.getElementById("verdict"), U = document.getElementById("sp-url");
+  G.innerHTML = names.map((n) => `<div class="g"><svg viewBox="0 0 96 96"><circle class="fill" cx="48" cy="48" r="42"/><circle class="bg" cx="48" cy="48" r="42"/><circle class="fg" cx="48" cy="48" r="42" style="stroke-dashoffset:264"/><text x="48" y="48">0</text></svg><span>${n}</span></div>`).join("");
+  M.innerHTML = data.tpl.m.map(() => `<div class="m"><small><i></i><span></span></small><b></b></div>`).join("");
+  const gs = [...G.querySelectorAll(".g")], ms = [...M.querySelectorAll(".m")];
+  const cur = [0, 0, 0, 0];
+  let auto = true;
+  const show = (mode) => {
+    const d = data[mode];
+    U.textContent = d.url;
+    gs.forEach((g, i) => {
+      const v = d.g[i], c = col(v), from = cur[i];
+      g.querySelector(".bg").style.stroke = c; g.querySelector(".fg").style.stroke = c;
+      g.querySelector(".fill").style.fill = c;
+      g.querySelector(".fg").style.strokeDashoffset = 264 * (1 - v / 100);
+      const t = g.querySelector("text"); t.style.fill = c;
+      const t0 = performance.now();
+      const step = (now) => { const p = reduce ? 1 : Math.min((now - t0) / 1200, 1); t.textContent = Math.round(from + (v - from) * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(step); else cur[i] = v; };
+      requestAnimationFrame(step);
+    });
+    const good = mode === "ours";
+    ms.forEach((m, i) => {
+      const [lbl, val] = d.m[i];
+      m.querySelector("span").textContent = lbl;
+      const b = m.querySelector("b"); b.textContent = val; b.style.color = good ? "#0c9a4a" : "#cf040e";
+      const dot = m.querySelector("i"); dot.style.background = good ? "#0c9a4a" : "#cf040e"; dot.style.borderRadius = good ? "50%" : "0";
+    });
+    V.textContent = d.verdict;
+    V.style.background = good ? "#0c9a4a14" : "#cf040e12";
+    V.style.color = good ? "#0c7a3c" : "#cf040e";
+    const sw = document.getElementById("switch");
+    sw.classList.toggle("ours", good);
+    sw.querySelectorAll("button").forEach((b) => { const on = b.dataset.mode === mode; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+  };
+  document.querySelectorAll("#switch button").forEach((b) => b.addEventListener("click", () => { auto = false; show(b.dataset.mode); }));
+  // при появлении: сначала шаблон, через 2,5 с — автоматически наш сайт
+  new IntersectionObserver(([e], o) => {
+    if (!e.isIntersecting) return; o.disconnect();
+    show("tpl");
+    setTimeout(() => { if (auto) show("ours"); }, 2500);
+  }, { threshold: .35 }).observe(document.getElementById("speed"));
+})();
+
+/* НОВОЕ: поток заявок — пример воронки по нише; «комета» идёт по линии, этапы загораются по очереди */
+(() => {
+  // показы → переходы → заявки → сделки → продажи (пример за месяц, средние значения по рынку)
+  const NICHES = [
+    { v: [85000, 2550, 230, 150, 96],  unit: "пациентов" },
+    { v: [120000, 2640, 185, 92, 28],  unit: "договоров" },
+    { v: [40000, 1200, 66, 40, 12],    unit: "оптовых заказов" },
+    { v: [200000, 5000, 600, 330, 120], unit: "оплат курса" },
+  ];
+  const box = document.getElementById("stages"), rail = document.getElementById("rail"), fill = rail.querySelector("i"), head = rail.querySelector("b");
+  const sum = document.getElementById("fsum");
+  const st = [...box.querySelectorAll(".stage")];
+  const TRAVEL = 380, DWELL = 320;
+  const fmt = (n) => n.toLocaleString("ru");
+  const pct = (a, b) => { const x = (a / b) * 100; return (x < 10 ? x.toFixed(1) : Math.round(x)).toString().replace(".", ","); };
+  let vals = [], c = [], vert = false, playing = false, done = false, run = 0;
+  const apply = (n) => {
+    vals = NICHES[n].v;
+    const conv = [
+      "охват за месяц",
+      `CTR ${pct(vals[1], vals[0])}%`,
+      `конверсия сайта ${pct(vals[2], vals[1])}%`,
+      `${pct(vals[3], vals[2])}% заявок`,
+      `${pct(vals[4], vals[3])}% сделок`,
+    ];
+    // ширина полосы — конверсия из предыдущего этапа
+    const bars = [100, ...vals.slice(1).map((v, i) => Math.max((v / vals[i]) * 100, 3))];
+    st.forEach((e, i) => { e.querySelector(".fs-conv").textContent = conv[i]; e.querySelector(".fs-bar").style.setProperty("--w", bars[i] + "%"); });
+    sum.innerHTML = `Итог: <b>${fmt(vals[0])} показов</b> → <b>${fmt(vals[4])} ${NICHES[n].unit}</b>. Каждый этап виден в аналитике, поэтому улучшаем самое слабое место, а не всё подряд.`;
+  };
+  const geo = () => {
+    const b = box.getBoundingClientRect();
+    c = st.map((e) => { const r = e.querySelector(".fs-ico").getBoundingClientRect(); return { x: r.left - b.left + r.width / 2, y: r.top - b.top + r.height / 2 }; });
+    vert = Math.abs(c[4].x - c[0].x) < 10;
+    rail.classList.toggle("v", vert);
+    Object.assign(rail.style, vert
+      ? { left: c[0].x - 1 + "px", top: c[0].y + "px", width: "2px", height: c[4].y - c[0].y + "px" }
+      : { left: c[0].x + "px", top: c[0].y - 1 + "px", height: "2px", width: c[4].x - c[0].x + "px" });
+  };
+  const count = (el, to, id) => { const t0 = performance.now(); const f = (t) => { if (id !== run) return; const p = Math.min((t - t0) / 600, 1); el.textContent = fmt(Math.round(to * (1 - Math.pow(1 - p, 3)))); if (p < 1) requestAnimationFrame(f); }; requestAnimationFrame(f); };
+  const setProgress = (pr) => {
+    fill.style.transform = vert ? `scaleY(${pr})` : `scaleX(${pr})`;
+    const len = vert ? c[4].y - c[0].y : c[4].x - c[0].x;
+    head.style.transform = vert ? `translateY(${pr * len - 90}px)` : `translateX(${pr * len - 90}px)`;
+  };
+  const finalState = () => { st.forEach((e, i) => { e.classList.remove("on"); e.classList.add("done"); e.querySelector(".fs-num").textContent = fmt(vals[i]); }); setProgress(1); rail.classList.remove("go"); sum.classList.add("on"); playing = false; done = true; };
+  const play = () => {
+    const id = ++run; playing = true; geo();
+    st.forEach((e) => { e.classList.remove("on", "done"); e.querySelector(".fs-num").textContent = "0"; });
+    sum.classList.remove("on"); rail.classList.add("go");
+    let stage = -1; const t0 = performance.now(), seg = TRAVEL + DWELL;
+    const frame = (now) => {
+      if (id !== run) return;
+      const t = now - t0, i = Math.min(Math.floor(t / seg), 4), local = t - i * seg;
+      const pr = (i + Math.min(Math.max((local - DWELL) / TRAVEL, 0), 1)) / 4;
+      if (i > stage) { stage = i; st.forEach((e, k) => { e.classList.toggle("on", k === i); e.classList.toggle("done", k < i); }); count(st[i].querySelector(".fs-num"), vals[i], id); }
+      setProgress(Math.min(pr, 1));
+      if (t < 4 * seg + DWELL) requestAnimationFrame(frame); else finalState();
+    };
+    requestAnimationFrame(frame);
+  };
+  apply(0); geo(); setProgress(0);
+  addEventListener("resize", () => { geo(); if (!playing) setProgress(done ? 1 : 0); });
+  document.querySelectorAll("#niches button").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll("#niches button").forEach((x) => { const on = x === b; x.classList.toggle("on", on); x.setAttribute("aria-selected", on); });
+    apply(+b.dataset.n);
+    if (reduce) finalState(); else play();
+  }));
+  if (reduce) { finalState(); return; }
+  new IntersectionObserver(([e]) => { if (e.isIntersecting && !playing) play(); }, { threshold: .15 }).observe(box);
+})();
+
+/* «Почему WordPress»: столбцы из квадратиков, каждый квадратик — 1% */
+(() => {
+  const cms = document.getElementById("cms");
+  cms.querySelectorAll(".cms-row").forEach((row, r) => {
+    const n = +row.dataset.v;
+    row.querySelector(".cms-bar").innerHTML = Array.from({ length: n }, (_, k) => `<i style="transition-delay:${(r * 60 + k * 22) / 1000}s"></i>`).join("");
+  });
+  if (reduce) { cms.classList.add("on"); return; }
+  new IntersectionObserver(([e], o) => { if (e.isIntersecting) { cms.classList.add("on"); o.disconnect(); } }, { threshold: .4 }).observe(cms);
+})();
+
+/* Отзывы — слайдер */
+(() => {
+  const data = [
+    ["rev-1.png", "Марина Бойкова", "руководитель отдела маркетинга", "С самого начала понравился подход: сначала разобрались в продукте и клиентах, а уже потом перешли к структуре и дизайну. Благодаря этому сайт получился не перегруженным и хорошо объясняет, чем мы занимаемся. После запуска подключили рекламу и начали получать целевые обращения."],
+    ["rev-2.png", "Алексей Морозов", "коммерческий директор", "Нам был нужен не просто новый сайт, а понятная система, которая будет работать вместе с рекламой. В итоге получили аккуратный современный сайт, настроенную аналитику и понятный путь до заявки. Особенно понравилось, что после запуска работа не закончилась — команда продолжила смотреть на показатели и предлагать улучшения."],
+    ["rev-3.png", "Елена Крылова", "маркетолог", "Проект запустили без лишней бюрократии и долгих согласований. Быстро определили структуру, подготовили тексты и собрали сайт. Отдельный плюс — сразу учли дальнейшее продвижение, поэтому после запуска не пришлось всё переделывать под рекламу."],
+    ["rev-4.png", "Дмитрий Плотников", "руководитель направления продаж", "Нам было важно показать сложный продукт простым и понятным языком. Команда хорошо погрузилась в задачу, помогла с подачей и структурой. В результате сайт стал понятнее для клиентов, а обращения более предметными."],
+    ["rev-5.png", "Сергей Кастомаров", "операционный директор", "После запуска стало проще работать с обращениями: заявки приходят в нужные каналы, аналитика показывает источники, а рекламные страницы можно быстро дорабатывать под новые предложения. Для нас это сильно упростило дальнейшее продвижение."],
+  ];
+  const s = document.getElementById("slider"), box = s.querySelector(".slides"), dots = s.querySelector(".dots");
+  box.innerHTML = data.map(([img, n, r, t]) => `<div class="slide"><p>${t}</p><img src="assets/img/${img}" alt="${n}"><b>${n}</b><span>${r}</span></div>`).join("");
+  dots.innerHTML = data.map((_, i) => `<button aria-label="Отзыв ${i + 1}"></button>`).join("");
+  const slides = [...box.children], ds = [...dots.children];
+  let cur = 0, auto;
+  const go = (i) => { cur = (i + data.length) % data.length; slides.forEach((el, k) => el.classList.toggle("on", k === cur)); ds.forEach((el, k) => el.classList.toggle("on", k === cur)); };
+  const restart = () => { clearInterval(auto); if (!reduce) auto = setInterval(() => go(cur + 1), 7000); };
+  s.querySelector(".l").onclick = () => { go(cur - 1); restart(); };
+  s.querySelector(".r").onclick = () => { go(cur + 1); restart(); };
+  ds.forEach((d, i) => (d.onclick = () => { go(i); restart(); }));
+  go(0); restart();
+})();
+
+/* FAQ */
+(() => {
+  // Вопросы и ответы — из документа заказчика (Google Docs), текст без изменений
+  const faq = [
+      [
+          "Создание сайта на WordPress",
+          "<p>WordPress уже давно перерос статус площадки для личных дневников. Сейчас это полноценный конструктор, на котором собирают всё: от простых визиток до серьезных маркетплейсов с огромным каталогом. Если вы как раз присматриваетесь к этой CMS для своего проекта, давайте разберем, с чего подступиться к разработке.</p><p>Прежде чем лезть в настройки, нужно решить вопрос с «фундаментом» — доменным именем и хостингом. Выбирайте провайдера внимательно: важно, чтобы сервер поддерживал свежие версии PHP и MySQL, иначе сайт будет работать медленно или вовсе выдавать ошибки.</p><p>Большинство хостинг-компаний сегодня предлагают автоустановку WordPress. Это самый простой путь для новичка: не нужно вручную создавать базы данных или копаться в файлах через FTP. Пара кликов — и «движок» уже стоит на сервере, готовый к работе.</p>"
+      ],
+      [
+          "Существует ли пошаговое создание сайта на WordPress для новичков?",
+          "<p>Да, процесс можно разделить на понятные этапы. Пошаговое создание сайта на WordPress выглядит так:</p><ol><li>Регистрация домена и покупка хостинга.</li><li>Установка CMS через панель управления хостингом.</li><li>Выбор темы оформления (дизайна).</li><li>Установка плагинов для расширения функционала (SEO, формы обратной связи, защита).</li><li>Наполнение сайта контентом.</li></ol><p>Если вам нужна подробная пошаговая инструкция на создание сайта на вордпрессе, обязательно уделите внимание настройке постоянных ссылок (ЧПУ) и установке SSL-сертификата — это критически важно для доверия пользователей и поисковых систем.</p>"
+      ],
+      [
+          "Почему стоит заказывать разработку сайта на WordPress у нас?",
+          "<p>Многие считают, что WordPress — это «конструктор для всех», но профессиональная разработка требует глубокого понимания архитектуры системы, безопасности и оптимизации скорости. Вот почему клиенты доверяют нам свои проекты:</p><ol><li><b>Индивидуальный подход, а не шаблоны.</b> Мы не просто «ставим тему» из интернета. Мы дорабатываем функционал под конкретные задачи вашего бизнеса, чтобы сайт был уникальным и удобным для ваших клиентов.</li><li><b>Скорость и SEO-оптимизация.</b> Мы знаем, как сделать так, чтобы сайт «летал». Мы настраиваем кэширование, оптимизируем изображения и очищаем код от лишнего «мусора», который тормозит загрузку страниц.</li><li><b>Безопасность превыше всего.</b> WordPress — популярная цель для атак. Мы устанавливаем профессиональные системы защиты, настраиваем регулярное резервное копирование и ограничиваем доступ к критически важным файлам, чтобы ваш ресурс был защищен от взломов и вредоносного ПО.</li><li><b>Техническая поддержка и обучение.</b> Мы не бросаем вас после сдачи проекта. Мы проводим инструктаж по работе с админ-панелью, чтобы вы могли самостоятельно публиковать новости или менять цены в каталоге. А если возникнут сложные технические вопросы — наша команда всегда на связи, чтобы оперативно помочь.</li><li><b>Масштабируемость.</b> Мы закладываем в архитектуру сайта потенциал для роста. Если сегодня вам нужен простой корпоративный сайт, а завтра — полноценный интернет-магазин с интеграцией 1С, CRM и платежных систем, мы подготовим базу, которая позволит расширить функционал без необходимости переделывать всё с нуля.</li><li><b>Прозрачность процессов и соблюдение сроков.</b> Мы работаем по четкому техническому заданию, которое составляем вместе с вами на старте. Вы всегда будете знать, на каком этапе находится ваш проект, и получите готовый сайт точно в оговоренное время. Никаких «завтраков» и скрытых доплат — только честное партнерство.</li><li><b>Интеграция с внешними сервисами.</b> Современный бизнес не существует в вакууме. Мы профессионально настраиваем интеграции с популярными CRM-системами (Bitrix24, AmoCRM), сервисами email-рассылок, системами аналитики (Яндекс.Метрика, Google Analytics) и платежными шлюзами. Ваш сайт станет полноценным узлом в экосистеме вашего бизнеса, автоматизируя рутинные процессы обработки заказов и сбора лидов.</li><li><b>Адаптивность под любые устройства.</b> Сегодня более 70% трафика приходится на смартфоны и планшеты. Мы гарантируем, что ваш сайт будет выглядеть безупречно на экранах любого размера. Мы не просто «подгоняем» верстку, а продумываем пользовательский опыт (UX) так, чтобы посетителю было удобно совершить целевое действие — будь то покупка товара или заказ обратного звонка — с любого устройства.</li><li><b>Чистота кода и отсутствие «тяжелых» плагинов.</b> Ошибка многих новичков — установка десятков плагинов, которые перегружают сервер и замедляют работу сайта. Мы придерживаемся принципа минимализма: используем только проверенные инструменты и пишем собственный код там, где это необходимо для производительности. Это делает ваш сайт легким, быстрым и простым в дальнейшем обслуживании.</li><li><b>Ориентация на конверсию.</b> Красивый сайт — это хорошо, но продающий сайт — гораздо лучше. При разработке мы учитываем принципы маркетинга: правильно расставляем акценты, проектируем логичные пути пользователя (User Flow) и создаем призывы к действию (CTA), которые действительно работают. Мы делаем так, чтобы каждый посетитель понимал, что ему нужно сделать, и хотел это сделать.</li></ol><p>Хороший сайт — это стабильный поток клиентов и высокие позиции в поиске. Мы берем на себя всю техническую рутину: от верстки до оптимизации. Вы получаете готовый сайт на WordPress, который не нужно постоянно &quot;чинить&quot;, а мы — довольного клиента, который может спокойно заниматься своим бизнесом.</p>"
+      ]
+  ];
+  document.getElementById("faq").innerHTML = faq.map(([q, a]) => `<div class="q fu"><button aria-expanded="false">${q}<span class="plus"></span></button><div class="ans"><div><div class="ans-body">${a}</div></div></div></div>`).join("");
+  document.querySelectorAll(".q button").forEach((b) => b.addEventListener("click", () => {
+    const q = b.parentElement, open = !q.classList.contains("open");
+    q.classList.toggle("open", open); b.setAttribute("aria-expanded", open);
+  }));
+})();
+
+/* Появление блоков */
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
+document.querySelectorAll(".fu,.zi").forEach((el) => io.observe(el));
+
+/* Форма (демо — без отправки на сервер) */
+document.getElementById("form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const f = e.target, bad = [...f.querySelectorAll("[required]")].filter((i) => i.type === "checkbox" ? !i.checked : !i.value.trim());
+  bad.forEach((i) => { i.style.borderColor = "#ff020e"; const clr = () => (i.style.borderColor = ""); i.addEventListener("input", clr, { once: true }); i.addEventListener("change", clr, { once: true }); });
+  if (!bad.length) f.classList.add("done");
+});
+</script>
+</body>
+</html>
