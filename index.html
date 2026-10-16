@@ -585,18 +585,19 @@ nav.scrolled .btn-swap:hover{background:var(--red-hover)}
 .price-partner-badge{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#cf040e;border:1px solid #cf040e;border-radius:2px;padding:3px 8px;margin-bottom:16px;align-self:flex-start}
 
 /* ===== 10. Отзывы ===== */
-.slider{position:relative;max-width:1360px;margin:0 auto;text-align:center;overflow-x:clip}
+/* Слайдер растянут на всю ширину окна (минус поля .wrap), стрелки — в 30px от краёв экрана, как в Tilda */
+.slider{position:relative;margin:0 -40px;text-align:center;overflow-x:clip}
 html{overflow-x:clip}
-.slides{display:grid}
+.slides{display:grid;max-width:1440px;margin:0 auto;padding:0 40px}
 .slide{grid-area:1/1;padding:0 100px;opacity:0;transform:translateX(40px);transition:opacity .6s var(--ease),transform .6s var(--ease);pointer-events:none}
 .slide.on{opacity:1;transform:none;pointer-events:auto}
 .slide p{font-size:16px;line-height:1.5;max-width:1160px;margin:0 auto}
 .slide img{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:36px auto 12px}
 .slide b{display:block;font-size:20px;font-weight:600}
 .slide span{display:block;margin-top:4px}
-.arrow{position:absolute;top:110px;width:40px;height:40px;border-radius:50%;background:var(--red);border:0;color:#fff;cursor:pointer;display:grid;place-items:center;transition:background .25s;z-index:2}
+.arrow{position:absolute;top:calc(50% - 43px);transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:var(--red);border:0;color:#fff;cursor:pointer;display:grid;place-items:center;transition:background .25s;z-index:2}
 .arrow:hover{background:var(--red-hover)}
-.arrow.l{left:-10px}.arrow.r{right:-10px}
+.arrow.l{left:30px}.arrow.r{right:30px}
 .dots{display:flex;justify-content:center;gap:6px;margin-top:36px}
 .dots button{width:10px;height:10px;border:0;background:#d8d8d8;cursor:pointer;padding:0;transition:background .3s}
 .dots button.on{background:var(--red)}
@@ -768,7 +769,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .price-card--partner{grid-column:1/-1}
   .price-card{grid-row:auto;display:flex;flex-direction:column}
   .price-card .price-btn{margin-top:auto}
-  .slide{padding:0}.slider{padding-bottom:0}.arrow{top:auto;bottom:-13px;width:40px;height:40px}.arrow.l{left:0}.arrow.r{right:0}.dots{margin-top:46px}
+  .slide{padding:0}.slider{padding-bottom:0;margin:0}.slides{padding:0}.arrow{top:auto;bottom:-13px;transform:none;width:40px;height:40px}.arrow.l{left:0}.arrow.r{right:0}.dots{margin-top:46px}
   .channels{grid-template-columns:1fr 1fr}
   .form-wrap{margin-top:60px;gap:40px}.form-img{order:-1;height:300px}
   form .btn{justify-self:stretch;justify-content:center}
