@@ -117,45 +117,117 @@ section{position:relative}
 .btn-light:hover{background:#fff}
 
 /* ===== Меню ===== */
-/* как в Tilda: в начале страницы шапка уезжает вместе с первым экраном, после 700px сверху выезжает фиксированная */
+/* размеры и брейкпоинты сняты с версии на Tilda (1920/1600/1200/960/640/480), чтобы страницы совпадали пиксель в пиксель */
+/* в начале страницы шапка — часть первого экрана, после 700px сверху выезжает фиксированная */
 nav{position:absolute;z-index:60;top:0;left:0;right:0}
-@keyframes navIn{from{transform:translateY(-110%)}to{transform:none}}
+@keyframes navIn{from{transform:translateY(-100%)}to{transform:none}}
+@keyframes icoScale{0%,100%{transform:none}50%{transform:scale(.8)}}
+@keyframes icoBlink{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes icoIn{from{opacity:0}}
 nav .bar{padding:0 40px}
-nav .in{display:flex;align-items:center;justify-content:space-between;height:68px;color:#fff;transition:background .4s,color .4s,padding .4s var(--ease)}
-.logo{font-size:25px;font-weight:600;letter-spacing:-2px;white-space:nowrap}
-nav ul{display:flex;gap:64px;font-size:17px;font-weight:500;letter-spacing:-.5px}
-nav ul a{position:relative;display:inline-block}
-.nav-ar{position:absolute;left:100%;top:50%;width:18px;height:18px;margin:-9px 0 0 6px;opacity:0;transform:translateX(-8px);transition:opacity .25s,transform .35s var(--ease)}
-nav ul a:hover .nav-ar{opacity:1;transform:none}
-nav .btn{padding:11px 20px}
-nav .btn-swap{background:var(--grey);color:var(--ink)}
-nav:not(.scrolled) .btn-swap:hover{background:var(--ink);color:var(--grey)}
-nav.scrolled{position:fixed;top:5px;animation:navIn .15s ease-out}
-nav.scrolled .in{background:#efefefe6;backdrop-filter:blur(10px);color:var(--ink);padding:0 30px}
+nav .in{display:flex;align-items:center;justify-content:space-between;color:var(--grey)}
+nav:not(.scrolled) .in{padding:10px 0}
+.logo{width:300.6px;font-size:24px;font-weight:600;line-height:1;letter-spacing:-2px;white-space:nowrap}
+nav ul{display:flex}
+nav ul a{display:flex;align-items:center;gap:5px;width:120px;padding:10px 15px;font-size:18px;font-weight:600;line-height:1.55;letter-spacing:-1px;transition:color .2s ease-in-out}
+nav ul li:last-child a{width:140px}
+nav ul a:hover{color:var(--grey-2)}
+.nav-ar{display:none;width:27px;height:27px;animation:icoBlink 2s ease-in-out infinite}
+.nav-ar svg{animation:icoIn .2s}
+nav ul a:hover .nav-ar{display:block}
+.nav-r{display:flex}
+nav .btn-swap{width:169px;gap:5px;padding:10px 20px;font-size:17px;line-height:1.1;letter-spacing:0;background:var(--grey);color:var(--ink);transition:background-color .2s ease-in-out,color .2s ease-in-out}
+nav .btn-swap .mi,.hero .cta .btn .mi{width:27px;height:27px;animation:icoScale 2s ease-in-out infinite}
+nav .btn-swap:hover{background:var(--ink);color:var(--grey)}
+.burger{display:none;align-items:center;gap:11px;width:96px;padding:10px;background:var(--grey);color:var(--ink);border:0;cursor:pointer;font:inherit;font-size:16px;font-weight:600;line-height:1.55;letter-spacing:-1px;transition:background-color .2s ease-in-out,color .2s ease-in-out}
+.burger .mi{width:20px;height:20px}
+.burger:hover{background:var(--red);color:var(--grey)}
+nav.scrolled{position:fixed;animation:navIn .15s}
+nav.scrolled .bar{padding:5px 40px}
+nav.scrolled .in{padding:10px 30px;background:rgba(233,233,233,.5);-webkit-backdrop-filter:blur(50px);backdrop-filter:blur(50px);color:var(--ink)}
+nav.scrolled ul a:hover{color:var(--red)}
 nav.scrolled .btn-swap{background:var(--red);color:var(--grey)}
-nav.scrolled .btn-swap:hover{background:var(--red-hover)}
-.burger{display:none;align-items:center;gap:8px;background:var(--grey);color:var(--ink);border:0;cursor:pointer;padding:9px 16px;font:inherit;font-size:16px;font-weight:600;letter-spacing:-.5px}
-.burger .mi{width:22px;height:22px}
+nav.scrolled .btn-swap:hover{background:var(--red-2)}
+@media (min-width:1600px){
+  nav:not(.scrolled) .in{padding:15px 0}
+  nav.scrolled .bar{padding:5px 60px}
+  nav .btn-swap{width:auto}
+}
+@media (min-width:1920px){
+  nav:not(.scrolled) .bar{padding:0 60px}
+  nav:not(.scrolled) .in{padding:20px 0}
+}
+@media (max-width:1199px){
+  nav ul{display:none}
+  .logo{width:auto;font-size:20px;letter-spacing:-1px}
+  .burger{display:flex}
+  nav .btn-swap{width:164px;height:45px;padding:5px 20px;font-size:16px}
+  nav.scrolled .in{padding:10px 20px}
+  nav.scrolled .btn-swap:hover{background:var(--red-hover)}
+  nav.scrolled .burger{width:auto}
+}
+@media (max-width:959px){
+  nav:not(.scrolled) .bar{padding:0 20px}
+  nav:not(.scrolled) .in{padding:10px 10px 10px 0}
+  .logo{width:303px;font-size:18px;white-space:normal}
+  .nav-r{gap:5px;align-items:flex-start}
+  nav .btn-swap{width:auto;height:auto;padding:6px 20px;font-size:14px}
+  nav .btn-swap .mi{width:20px;height:20px}
+  .burger,nav.scrolled .burger{width:auto;padding:5px 15px 5px 10px;font-size:14px}
+  .burger .mi{width:15px;height:15px}
+  nav.scrolled .bar{padding:5px 0}
+}
+@media (max-width:639px){
+  .logo{width:162px}
+  nav .btn-swap,.burger{letter-spacing:-.5px}
+  nav.scrolled .in{padding:10px;justify-content:space-around}
+  nav.scrolled .logo{width:167px}
+}
+@media (max-width:479px){
+  .logo,nav.scrolled .logo{width:160px}
+  nav:not(.scrolled) .in{padding:10px 0}
+  .burger:hover{color:#fff}
+}
 
 .mmenu{position:fixed;inset:0;z-index:70;visibility:hidden;pointer-events:none;transition:visibility 0s .3s}
 .mmenu.open{visibility:visible;pointer-events:auto;transition:none}
-.mm-bg{position:absolute;inset:0;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:0;transition:opacity .3s}
+.mm-bg{position:absolute;inset:0;background:rgba(0,0,0,.3);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s}
 .mmenu.open .mm-bg{opacity:1}
-.mm-panel{position:absolute;top:0;right:0;bottom:0;width:300px;max-width:100%;background:#fff;padding:16px 20px;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.76,0,.24,1)}
+/* панель — как попап меню в Tilda: шапка, пункты посередине, контакты внизу */
+.mm-panel{position:absolute;top:0;right:0;bottom:0;width:450px;max-width:100%;background:#fff;padding:20px 40px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;transform:translateX(100%);transition:transform .3s cubic-bezier(.76,0,.24,1)}
 .mmenu.open .mm-panel{transform:none}
-.mm-top{display:flex;justify-content:space-between;align-items:flex-start}
-.mm-logo{font-size:18px;letter-spacing:-1px;line-height:1;color:#151515;max-width:170px}
-.mm-close{background:none;border:0;padding:0;cursor:pointer;width:30px;height:30px}
-.mm-nav{margin:auto 0;transform:translateY(12px);display:flex;flex-direction:column;align-items:flex-end;gap:16px}
-.mm-nav a{font-size:16px;line-height:1.4;color:#151515;border-bottom:1px solid #151515;transition:color .25s,border-color .25s}
-.mm-nav a:hover{color:var(--red);border-color:var(--red)}
-.mm-foot{display:flex;flex-direction:column;align-items:flex-end}
-.mm-soc{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
-.mm-soc a{position:relative;width:55px;height:54px}
+.mm-top{align-self:stretch;display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:40px}
+.mm-logo{flex:none;font-size:20px;line-height:1;letter-spacing:-1px;color:#151515}
+.mm-close{flex:none;background:none;border:0;padding:0;cursor:pointer;width:30px;height:30px}
+.mm-close img{display:block}
+.mm-nav{display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+.mm-nav a{position:relative;padding:2px;font-size:16px;line-height:1.2;color:#151515;background:linear-gradient(#121212,#121212) 0 100%/100% 1.15px no-repeat;transition:color .2s ease-in-out}
+.mm-nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.15px;background:var(--red);opacity:0;transition:opacity .2s ease-in-out}
+.mm-nav a:hover{color:var(--red)}
+.mm-nav a:hover::after{opacity:1}
+.mm-foot{display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-top:20px}
+.mm-soc{display:flex;flex-direction:column;gap:4px}
+.mm-soc a{position:relative;width:64px;height:64px}
 .mm-soc img{position:absolute;inset:0;width:100%;height:100%}
 .mm-soc img.hv{opacity:0;transition:opacity .2s}.mm-soc a:hover img.hv{opacity:1}
-.mm-mail{font-size:16px;color:#121212;text-decoration:underline}
-.mm-hours{font-size:14px;color:#949494;margin-top:6px}
+.mm-ct{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.mm-mail{font-family:Arial,sans-serif;font-size:14px;line-height:17px;color:#121212;text-decoration:underline}
+.mm-hours{font-size:14px;line-height:21px;color:rgba(18,18,18,.5)}
+@media (max-width:959px){
+  .mm-panel{width:350px;padding:20px}
+  .mm-logo{width:303px;font-size:18px}
+}
+@media (max-width:639px){
+  .mm-panel{width:310px}
+  .mm-logo{width:139px;font-size:15px}
+  .mm-soc a{width:54px;height:54px}
+}
+@media (max-width:479px){
+  .mm-panel{width:300px;padding:16px 20px}
+  .mm-logo{width:160px;font-size:18px}
+  .mm-soc a{width:55px;height:54px}
+  .mm-mail{font-size:16px;line-height:19px}
+}
 
 /* ===== Появление при прокрутке ===== */
 .fu{opacity:0;transform:translateY(60px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
@@ -164,20 +236,74 @@ nav.scrolled .btn-swap:hover{background:var(--red-hover)}
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
 
 /* ===== 1. Первый экран ===== */
-.hero{min-height:100vh;min-height:100svh;background:#0d0d0d url(assets/img/hero-bg.webp) center/cover no-repeat;color:#fff;display:flex;flex-direction:column;padding:120px 0 40px;overflow:hidden}
-.hero .wrap{position:relative;z-index:1;width:100%;flex:1;display:flex;flex-direction:column}
-.hero-grid{margin:auto 0}
-.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
-.hero h1{max-width:620px}
-.hero p{font-size:20px;font-weight:500;letter-spacing:-.5px;line-height:1.5;margin:28px 0 44px;max-width:620px;color:#efefef}
-.hero .cta{display:flex;gap:10px;flex-wrap:wrap}
-.hero .btn-light:hover{background:var(--red);color:var(--grey)}
-.shots{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.shot{background:#ffffff4d;padding:10px}
-.shot img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:top left}
-.hero-tags{display:flex;flex-wrap:wrap;gap:12px 40px;margin-top:60px;font-size:20px;font-weight:600;letter-spacing:-1px}
+/* как в Tilda: шапка сверху, контент посередине, теги внизу; высота — экран, но не меньше макета брейкпоинта;
+   весь экран с фоном и шапкой проявляется с масштаба 0.7 */
+.hero{position:relative;min-height:max(100vh,606px);min-height:max(100svh,606px);display:flex;flex-direction:column;justify-content:space-between;gap:60px;padding:0 40px 30px;background:#0d0d0d url(assets/img/hero-bg.webp) 50% 0/cover no-repeat;color:var(--grey);overflow:hidden;overflow-anchor:none}
+@keyframes heroIn{from{opacity:0;transform:scale(.7)}}
+/* класс ставит скрипт, только если страница открыта на первом экране; overflow-anchor — чтобы браузер
+   не подкручивал страницу, пока экран масштабируется */
+.hero.hero-in{animation:heroIn 2s cubic-bezier(.19,1,.22,1)}
+.hero-top{flex:none;height:67.9px}
+.hero-main{display:flex;gap:40px}
+.hero-txt{flex:1 1 0;min-width:0;display:flex;flex-direction:column;gap:40px}
+.hero-copy{display:flex;flex-direction:column;gap:20px}
+.hero h1{font-size:52px;line-height:1;letter-spacing:-3px}
+.hero p{font-size:20px;font-weight:600;line-height:30px;letter-spacing:-.5px;color:var(--grey-2)}
+.hero .cta{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.hero .cta .btn{gap:5px;padding:15px 20px;font-size:17px;line-height:1.55;letter-spacing:-1px;background:var(--grey);color:var(--ink);transition:background-color .2s ease-in-out,color .2s ease-in-out}
+.hero .cta .btn:hover{background:var(--red-2);color:var(--grey)}
+.shots{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:10px}
+.shot{flex:1 1 0;min-width:0;padding:10px;border-radius:5px;background:linear-gradient(0deg,rgba(220,229,237,.5),rgba(159,183,196,.39))}
+.shot img{display:block;width:100%;height:auto}
+.hero-tags{display:flex;flex-wrap:wrap;gap:10px 40px;font-size:20px;font-weight:700;line-height:31px;letter-spacing:-1px}
 .hero-tags li{display:flex;align-items:center;gap:10px}
-.hero-tags li::before{content:"";width:5px;height:5px;background:#fff}
+.hero-tags li::before{content:"";flex:none;width:5px;height:5px;background:var(--grey)}
+@media (min-width:1600px){
+  .hero{min-height:max(100vh,536px);min-height:max(100svh,536px)}
+  .hero-top{height:77.9px}
+  .hero-txt{flex:0 0 1010px}
+  .hero h1{letter-spacing:0}
+}
+@media (min-width:1920px){
+  .hero{min-height:max(100vh,606px);min-height:max(100svh,606px);gap:80px;padding:0 60px 30px;background-position:50% 50%}
+  .hero-top{height:87.9px}
+  .hero h1{min-height:120px}
+  .hero p{min-height:60px}
+  .shot{background:rgba(237,220,227,.5)}
+}
+@media (max-width:1199px){
+  .hero{min-height:max(100vh,886px);min-height:max(100svh,886px)}
+  .hero-top{height:65px}
+  .hero-main{flex-direction:column}
+  .hero-txt,.shots{flex:none;width:100%}
+  .hero h1{font-size:40px;letter-spacing:-3px}
+  .hero p{font-size:17px;line-height:26px}
+  .hero-tags{column-gap:20px}
+}
+@media (max-width:959px){
+  .hero{min-height:max(100vh,863px);min-height:max(100svh,863px);gap:100px;padding:0 20px 30px}
+  .hero-top{height:52px}
+  .hero h1{font-size:32px}
+  .hero .cta .btn{padding:10px 20px;font-size:16px}
+  .hero-tags{align-items:flex-end;font-size:16px;line-height:25px}
+}
+@media (max-width:639px){
+  .hero.hero-in{animation:none}
+  .hero{min-height:max(100vh,725px);min-height:max(100svh,725px);justify-content:flex-start;gap:50px;padding:0 20px 40px}
+  .hero-top{height:56px}
+  .hero h1{letter-spacing:-2px}
+  .hero p{font-size:16px;line-height:24px}
+  .hero .cta .btn{letter-spacing:-.5px}
+  .hero-tags{flex-grow:1;align-content:flex-start;gap:10px}
+}
+@media (max-width:479px){
+  .hero{min-height:max(100vh,1187px);min-height:max(100svh,1187px)}
+  .hero h1{font-size:28px}
+  .hero .cta .btn{width:100%}
+  .shots{flex-direction:column}
+  .shot{flex:none;width:100%}
+  .hero-tags{align-items:flex-start;font-size:15px;line-height:23px;letter-spacing:-.5px}
+}
 
 /* ===== 2. Как бывает / Как работаем ===== */
 .compare{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(5,auto);column-gap:20px}
@@ -702,7 +828,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 @media (min-width:1900px){
   .types-right{margin-left:-100px}.types-right .descr{margin-right:60px}
   :root{--gap:240px}
-  .wrap,nav .bar{padding:0 60px}
+  .wrap{padding:0 60px}
   /* «Как бывает / Как работаем» — лесенка из 4 колонок */
   .compare{grid-template-rows:auto}
   .col{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto;align-items:start;padding:30px}
@@ -715,12 +841,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .tip{right:auto;left:20px;bottom:auto}
   .pop{position:relative;right:auto;top:auto;display:block;width:180px;margin:24px 0 0 -10px}
 }
-@media (max-width:1199px){:root{--gap:120px}h1{font-size:40px;letter-spacing:-2.5px}h2{font-size:38px;letter-spacing:-2px}.stat b{font-size:52px}.share-top b{font-size:96px;letter-spacing:-5px}nav ul{gap:32px}.gauges{grid-template-columns:repeat(2,1fr)}.fs-num{font-size:32px}.stages{gap:12px}.stage{padding:20px 14px}
-  nav ul{display:none}.burger{display:inline-flex}
-  .logo{font-size:20px}
-  nav .btn-swap{margin-left:auto;margin-right:0;height:45px;padding:0 20px;font-size:16px;letter-spacing:0}
-  .burger{height:45px;padding:0 14px;font-size:16px;letter-spacing:-1px;gap:8px}.burger .mi{width:20px;height:20px}
-  .hero-grid{grid-template-columns:1fr}.shots{margin-top:30px}.hero-tags{margin-top:40px}
+@media (max-width:1199px){:root{--gap:120px}h1{font-size:40px;letter-spacing:-2.5px}h2{font-size:38px;letter-spacing:-2px}.stat b{font-size:52px}.share-top b{font-size:96px;letter-spacing:-5px}.gauges{grid-template-columns:repeat(2,1fr)}.fs-num{font-size:32px}.stages{gap:12px}.stage{padding:20px 14px}
   .compare{grid-template-columns:1fr;grid-template-rows:auto;row-gap:20px}
   .col{grid-row:auto;display:block}
   .row{min-height:0}
@@ -751,25 +872,14 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 }
 @media (max-width:959px){
   :root{--gap:80px}
-  .wrap,nav .bar{padding:0 20px}
+  .wrap{padding:0 20px}
   .show-cat{height:32px}.show-cat span{font-size:26px;letter-spacing:-1.2px}
-  .logo{font-size:18px;letter-spacing:-1px;white-space:nowrap;line-height:1}
-  nav .bar{padding:0}
-  nav .in{padding:0 20px}
-  nav.scrolled{top:5px}
-  nav.scrolled .in{padding:0 36px}
-  .burger{height:32px;padding:0 12px 0 10px;font-size:14px;letter-spacing:-1px;gap:12px;min-width:91px}.burger .mi{width:15px;height:15px}
-  nav .btn-swap{height:32px;padding:0 16px;font-size:14px;margin-right:5px}
-  nav .in{height:56px}
-  nav.scrolled .burger{background:transparent}
   h1{font-size:32px;letter-spacing:-2px}h2{font-size:30px;letter-spacing:-2px}
   .col>h3{font-size:30px;letter-spacing:-2px}
   .row h4,.col.light .row h4{font-size:20px;line-height:1.1}
-  .hero p{font-size:17px;line-height:1.53;font-weight:600}
   .descr,.head .descr{font-size:15px;line-height:1.53}
   .head .descr{letter-spacing:-.5px}
   .eyebrow{line-height:14px;letter-spacing:-.5px}
-  .hero-tags{font-size:16px;letter-spacing:-1px}
   .stat b{font-size:50px;letter-spacing:-2.4px;line-height:1.2}
   .stat > span{font-size:15px}
   .wcard h3,.steps .st h3{font-size:20px;line-height:1.1}
@@ -780,9 +890,6 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .speed-l ul{display:none}
   .head > .descr{grid-column:1;grid-row:3}
   .head{margin-bottom:40px}
-  .hero{padding:110px 0 40px}
-  .shots{margin-top:30px}
-  .hero-tags{margin-top:40px}
   /* панели на всю ширину, «i» под заголовком, скриншоты видны сразу */
   .compare{grid-template-columns:1fr;grid-template-rows:auto;gap:0;margin:0 -20px}
   .col{padding:30px 20px 10px;grid-row:auto;display:block}
@@ -816,12 +923,8 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 }
 @media (max-width:640px){
   h2{font-size:30px;letter-spacing:-1.5px}
-  .logo{white-space:normal;max-width:165px}
-  .burger{letter-spacing:-.5px}
   .col>h3{letter-spacing:-1.5px}
-  .hero .btn{font-size:16px;letter-spacing:-.5px}
   .row h4,.col.light .row h4,.wcard h3,.steps .st h3{font-size:18px}
-  .hero p{font-size:16px;line-height:1.5}.hero-tags{font-size:15px;letter-spacing:-.5px;gap:10px 18px}
   .stat b{font-size:50px;letter-spacing:-3.1px}
   .stats{grid-template-columns:1fr}
   .stat,.stat:nth-child(2n){border-right:0;border-bottom:1px solid var(--line);padding:32px 0}
@@ -851,8 +954,6 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .show-cat{height:28px}.show-cat span{font-size:22px;letter-spacing:-1px}
   .col>h3{font-size:26px;letter-spacing:-1.5px}
   .case h3{font-size:22px}
-  .hero .cta{flex-direction:column}.hero .cta .btn{width:100%}
-  .shots{grid-template-columns:1fr}
   .promo .btn,.types-head .left .btn{width:100%;justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){
@@ -864,12 +965,6 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 </head>
 <body>
 
-<nav id="nav"><div class="bar"><div class="in">
-  <a class="logo" href="#">Разработка сайтов на WordPress</a>
-  <ul><li><a href="#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#cases">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#prices">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#contacts">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
-  <a class="btn btn-swap" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать <i class="mi i-arrow"></i></a>
-  <button class="burger" id="burger" aria-label="Открыть меню"><i class="mi i-burger"></i>Меню</button>
-</div></div></nav>
 <div class="mmenu" id="mmenu" aria-hidden="true">
   <div class="mm-bg" id="mm-bg"></div>
   <div class="mm-panel">
@@ -881,8 +976,10 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
         <a href="tel:+7" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
         <a href="mailto:hello@studio.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
       </div>
-      <a class="mm-mail" href="mailto:hello@studio.com">hello@studio.com</a>
-      <span class="mm-hours">9:00-20:00 ежедневно</span>
+      <div class="mm-ct">
+        <a class="mm-mail" href="mailto:hello@studio.com">hello@studio.com</a>
+        <span class="mm-hours">9:00-20:00 ежедневно</span>
+      </div>
     </div>
   </div>
 </div>
@@ -890,23 +987,30 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <div class="page" id="page">
 <!-- 1. Первый экран -->
 <header class="hero">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <h1 class="fu">Не просто сайт на WordPress — система для заявок и&nbsp;продаж</h1>
-        <p class="fu d1">Создаём быстрый сайт на WordPress и связываем его с рекламой, CRM и аналитикой. Сайт полностью ваш — без абонентской платы конструктору — и работает как понятная система: от первого перехода до заявки и продажи.</p>
-        <div class="cta fu d2">
-          <a class="btn btn-light" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a>
-          <a class="btn btn-light" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать проект <i class="mi i-arrow"></i></a>
-        </div>
+  <nav id="nav"><div class="bar"><div class="in">
+    <a class="logo" href="#">Разработка сайтов на WordPress</a>
+    <ul><li><a href="#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#cases">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#prices">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#contacts">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
+    <div class="nav-r"><a class="btn btn-swap" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать <i class="mi i-arrow"></i></a>
+    <button class="burger" id="burger" aria-label="Открыть меню"><i class="mi i-burger"></i>Меню</button></div>
+  </div></div></nav>
+  <div class="hero-top"></div>
+  <div class="hero-main">
+    <div class="hero-txt">
+      <div class="hero-copy">
+        <h1>Не&nbsp;просто сайт на&nbsp;WordPress&nbsp;— система для&nbsp;заявок и&nbsp;продаж</h1>
+        <p>Создаём быстрый сайт на WordPress и связываем его с рекламой, CRM и аналитикой. Сайт полностью ваш, без абонентской платы конструктору. Он работает как понятная система: от первого перехода до заявки и продажи.</p>
       </div>
-      <div class="shots zi d3">
-        <div class="shot"><img src="assets/img/how-1.webp" alt="Отчёт Яндекс.Метрики: рост посещаемости"></div>
-        <div class="shot"><img src="assets/img/how-4.webp" alt="Яндекс.Директ: рост конверсий"></div>
+      <div class="cta">
+        <a class="btn btn-light" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a>
+        <a class="btn btn-light" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать проект <i class="mi i-arrow"></i></a>
       </div>
     </div>
-    <ul class="hero-tags fu d4"><li>Сайт</li><li>Реклама</li><li>Продвижение</li><li>CRM</li><li>Чат-боты</li><li>SEO</li><li>Аналитика</li></ul>
+    <div class="shots">
+      <div class="shot"><img src="assets/img/how-1.webp" alt="Отчёт Яндекс.Метрики: рост посещаемости"></div>
+      <div class="shot"><img src="assets/img/how-4.webp" alt="Яндекс.Директ: рост конверсий"></div>
+    </div>
   </div>
+  <ul class="hero-tags"><li>Сайт</li><li>Реклама</li><li>Продвижение</li><li>CRM</li><li>Чат-боты</li><li>SEO</li><li>Аналитика</li></ul>
 </header>
 
 <!-- 2. Красивого сайта недостаточно -->
@@ -1295,7 +1399,12 @@ const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 /* Плавное появление страницы и полоса загрузки сверху (как T360 в Tilda) */
 (() => {
   const page = document.getElementById("page");
-  setTimeout(() => page.classList.add("page-on"), 200);
+  const hero = document.querySelector(".hero");
+  hero.addEventListener("animationend", (e) => { if (e.target === hero) hero.classList.remove("hero-in"); });
+  setTimeout(() => {
+    page.classList.add("page-on");
+    if (scrollY <= 700 && hero.getBoundingClientRect().bottom > 0) hero.classList.add("hero-in");
+  }, 200);
   addEventListener("pageshow", (e) => { if (e.persisted) page.classList.add("page-on"); });
   const isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor);
   if (isSafari) return;
@@ -1324,7 +1433,11 @@ document.querySelectorAll("[data-ar]").forEach((e) => (e.innerHTML = AR));
 
 /* Меню */
 const nav = document.getElementById("nav");
-const onScrollNav = () => nav.classList.toggle("scrolled", scrollY > 700);
+const onScrollNav = () => {
+  nav.classList.toggle("scrolled", scrollY > 700);
+  // фиксированная шапка лежит внутри первого экрана: пока он масштабируется, она не видна — анимацию снимаем
+  if (scrollY > 700) document.querySelector(".hero").classList.remove("hero-in");
+};
 addEventListener("scroll", onScrollNav, { passive: true }); onScrollNav();
 const mm = document.getElementById("mmenu");
 document.getElementById("burger").onclick = () => { mm.classList.add("open"); mm.setAttribute("aria-hidden", "false"); };
