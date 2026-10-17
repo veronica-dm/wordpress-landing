@@ -51,7 +51,7 @@
   --gap:160px
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--canvas);color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
+body{background:var(--canvas);color:var(--ink);font-family:Inter,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 ul{list-style:none}
@@ -80,7 +80,11 @@ em{font-style:normal}
 .t360__barprogresshidden{opacity:0;width:100%}
 
 /* ===== Типографика ===== */
-.eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:-.2px;text-transform:uppercase;color:var(--red)}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;line-height:14px;letter-spacing:-.5px;text-transform:uppercase;color:var(--red)}
+/* как на Tilda: у части подписей шире интервал, у «Разработки под задачу» — жирнее */
+.eyebrow.eb-wide{line-height:18px;letter-spacing:-.2px}
+.eyebrow.eb-bold{font-weight:700}
+@media (min-width:960px){.eyebrow.eb-wide-d{line-height:18px;letter-spacing:-.2px}}
 .eyebrow::before{content:"";width:10px;height:10px;background:var(--red)}
 h1{font-size:52px;font-weight:600;line-height:1;letter-spacing:-3px}
 h2{font-size:50px;font-weight:600;line-height:1;letter-spacing:-3px;margin-top:16px}
@@ -218,7 +222,7 @@ nav.scrolled .btn-swap:hover{background:var(--red-2)}
 .mm-soc img{position:absolute;inset:0;width:100%;height:100%}
 .mm-soc img.hv{opacity:0;transition:opacity .2s}.mm-soc a:hover img.hv{opacity:1}
 .mm-ct{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
-.mm-mail{font-family:Arial,sans-serif;font-size:14px;line-height:17px;color:#121212;text-decoration:underline}
+.mm-mail{font-size:14px;line-height:17px;color:#121212;text-decoration:underline}
 .mm-hours{font-size:14px;line-height:21px;color:rgba(18,18,18,.5)}
 @media (max-width:959px){
   .mm-panel{width:350px;padding:20px}
@@ -350,7 +354,7 @@ nav.scrolled .btn-swap:hover{background:var(--red-2)}
 @keyframes promo-pulse{from{opacity:.7;transform:scale(1) translateX(0)}to{opacity:1;transform:scale(1.03) translateX(-12px)}}
 @keyframes promo-glow{from{opacity:.7}to{opacity:1}}
 .promo__inner{position:relative;max-width:840px;margin:0 auto;display:flex;flex-direction:column;align-items:center;z-index:1}
-.promo__badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.18em;color:#cf040e;border:1.5px solid #cf040e;padding:4px 14px;text-transform:uppercase;margin-bottom:28px}
+.promo__badge{display:inline-block;font-size:11px;font-weight:700;line-height:normal;letter-spacing:.18em;color:#cf040e;border:1.5px solid #cf040e;padding:4px 14px;text-transform:uppercase;margin-bottom:28px}
 .promo__title{color:#efefef;font-size:50px;font-weight:600;line-height:1;letter-spacing:-.01em;text-wrap:balance;margin:0 0 20px}
 .promo__sub{color:rgba(255,255,255,.65);font-size:16px;margin:0 0 44px;line-height:1.5}
 .promo__timer{display:flex;align-items:center;gap:8px;margin-bottom:20px}
@@ -406,7 +410,7 @@ nav.scrolled .btn-swap:hover{background:var(--red-2)}
 .lp-screen::before{content:"";position:absolute;top:-7px;left:50%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#333}
 .lp-view{position:absolute;inset:0;overflow:hidden;background:#111}
 .lp-view{container-type:inline-size}
-.ds{position:absolute;inset:0;overflow:hidden;clip-path:inset(100% 0 0 0);transform:scale(1.06);transition:clip-path .9s var(--ease),transform 1.2s var(--ease);font-family:Inter,-apple-system,Arial,sans-serif;line-height:1.15;letter-spacing:0;-webkit-font-smoothing:antialiased}
+.ds{position:absolute;inset:0;overflow:hidden;clip-path:inset(100% 0 0 0);transform:scale(1.06);transition:clip-path .9s var(--ease),transform 1.2s var(--ease);font-family:Inter,sans-serif;line-height:1.15;letter-spacing:0;-webkit-font-smoothing:antialiased}
 .ds.on{clip-path:inset(0 0 0 0);transform:none}
 .ds.under{clip-path:inset(0 0 0 0);transform:none;transition:none}
 .ds *{box-sizing:border-box;font-style:normal}
@@ -886,7 +890,6 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .row h4,.col.light .row h4{font-size:20px;line-height:1.1}
   .descr,.head .descr{font-size:15px;line-height:1.53}
   .head .descr{letter-spacing:-.5px}
-  .eyebrow{line-height:14px;letter-spacing:-.5px}
   .stat b{font-size:50px;letter-spacing:-2.4px;line-height:1.2}
   .stat > span{font-size:15px}
   .wcard h3,.steps .st h3{font-size:20px;line-height:1.1}
@@ -1090,7 +1093,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <section class="sec" id="services"><div class="wrap">
   <div class="types-head">
     <div class="left">
-      <div><p class="eyebrow fu">Разработка под задачу</p><h2 class="rv">Подбираем платформу под задачу бизнеса и&nbsp;<em>требования проекта</em></h2></div>
+      <div><p class="eyebrow eb-bold fu">Разработка под задачу</p><h2 class="rv">Подбираем платформу под задачу бизнеса и&nbsp;<em>требования проекта</em></h2></div>
       <div class="fu d2"><a class="btn btn-red" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a></div>
     </div>
     <div class="types-right fu d2">
@@ -1179,7 +1182,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <!-- НОВОЕ: скорость = заявки -->
 <section class="sec"><div class="wrap">
   <div class="head">
-    <div><p class="eyebrow fu">Скорость и&nbsp;SEO</p><h2 class="rv">Быстрые сайты с SEO‑основой — <em>больше заявок без доработок</em></h2></div>
+    <div><p class="eyebrow eb-wide-d fu">Скорость и&nbsp;SEO</p><h2 class="rv">Быстрые сайты с SEO‑основой — <em>больше заявок без доработок</em></h2></div>
     <p class="descr fu d2">Собираем сайт на чистом коде без лишних плагинов: загрузка меньше секунды, зелёная зона Core Web Vitals и SEO‑структура с первого дня. Поисковики поднимают сайт выше, посетители не уходят, а вам не нужно ничего переделывать — сайт просто приносит заявки.</p>
   </div>
   <div class="speed fu d2" id="speed">
@@ -1226,7 +1229,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <!-- НОВОЕ: поток заявок по этапам -->
 <section class="sec flow"><div class="wrap">
   <div class="head">
-    <div><p class="eyebrow fu">Как это работает вживую</p><h2 class="rv">Каждый клиент — на виду, <em>от клика до продажи</em></h2></div>
+    <div><p class="eyebrow eb-wide fu">Как это работает вживую</p><h2 class="rv">Каждый клиент — на виду, <em>от клика до продажи</em></h2></div>
     <p class="descr fu d2">Так выглядит система, которую мы собираем. Поток посетителей проходит этапы по очереди: на каждом часть отсеивается, а аналитика показывает, где именно. Поэтому мы точно знаем, что улучшать.</p>
   </div>
   <div class="niches fu d2">
@@ -1272,7 +1275,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <!-- НОВОЕ: манифест -->
 <section class="sec" id="why"><div class="wrap">
   <div class="head">
-    <div><p class="eyebrow fu">Почему WordPress</p><h2 class="rv">Самая популярная платформа <em>для сайтов в мире</em></h2></div>
+    <div><p class="eyebrow eb-wide fu">Почему WordPress</p><h2 class="rv">Самая популярная платформа <em>для сайтов в мире</em></h2></div>
     <p class="descr fu d2">WordPress в 2026&nbsp;году — это не&nbsp;просто «движок для блогов», а открытая платформа с ИИ&nbsp;в ядре, визуальным редактором и тысячами готовых интеграций. А сайт на ней полностью принадлежит вам.</p>
   </div>
   <div class="why-grid">
