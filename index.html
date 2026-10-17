@@ -724,9 +724,11 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .types-right .descr{grid-column:1/-1;margin-right:0}
   .show{height:auto;margin-top:40px}
   .show-stage{position:static;height:auto;grid-template-columns:1fr;padding:0 40px}
-  .show-side{order:0}.show-steps{display:none}
-  .show-nav{display:flex;position:absolute;top:2px;right:0;margin:0}.show-side{position:relative;padding-bottom:20px}.show-count{line-height:44px}.show-nav button{width:40px;height:40px}.show-prog i{cursor:pointer}
-  .show-side{display:flex;flex-direction:column}.show-count{order:0}.show-prog{order:1;margin-top:6px;gap:3px}.show-prog i{width:14px;height:14px}.show-cat{order:2;margin-top:14px}.show-text{order:3}
+  .show-stage{gap:0}.show-side{order:0;position:relative;display:flex;flex-direction:column;padding-bottom:16px}
+  .show-count{order:0;line-height:44px}.show-cat{order:2;height:34px;margin-top:6px}.show-text{display:none}
+  .show-steps{display:flex;flex-flow:row wrap;gap:6px 16px;margin-top:10px;order:3;font-size:13px}
+  .show-prog{order:4;margin-top:8px;height:40px;align-items:center;gap:3px}.show-prog i{width:14px;height:14px;cursor:pointer}
+  .show-nav{display:flex;position:absolute;top:auto;bottom:16px;right:0;margin:0}.show-nav button{width:40px;height:40px}
   .show-scene{height:min(56vw,560px)}.laptop{width:78%}
   .show-scene .art{display:none}
   .work{grid-template-columns:1fr}
@@ -739,7 +741,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 @media (max-width:959px){
   :root{--gap:80px}
   .wrap,nav .bar{padding:0 20px}
-  .show-cat{height:56px}.show-cat span{font-size:26px;letter-spacing:-1.2px}.show-text{max-width:none}
+  .show-cat{height:32px}.show-cat span{font-size:26px;letter-spacing:-1.2px}
   .logo{font-size:18px;letter-spacing:-1px;white-space:nowrap;line-height:1}
   nav .bar{padding:0}
   nav .in{padding:0 20px}
@@ -835,7 +837,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   nav .btn-swap{display:none}
   .types-right{grid-template-columns:198px 1fr}.types-right .descr{max-width:none}
   h1{font-size:28px;letter-spacing:-2px}h2{font-size:26px;letter-spacing:-2px}
-  .show-cat{height:48px}.show-cat span{font-size:22px;letter-spacing:-1px}
+  .show-cat{height:28px}.show-cat span{font-size:22px;letter-spacing:-1px}
   .col>h3{font-size:26px;letter-spacing:-1.5px}
   .case h3{font-size:22px}
   .hero .cta{flex-direction:column}.hero .cta .btn{width:100%}
@@ -951,7 +953,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   <div class="promo__inner">
     <div class="promo__badge">Акция</div>
     <h2 class="promo__title" id="promo-heading">Бесплатный сайт в счёт<br>системы продвижения</h2>
-    <p class="promo__sub">Пока идёт таймер — лендинг на WordPress за наш счёт.</p>
+    <p class="promo__sub">Пока идёт таймер — сайт на WordPress за наш счёт.</p>
     <div class="promo__timer" aria-label="Обратный отсчёт">
       <div class="promo__timer-unit"><span class="promo__timer-num" id="promo-min">15</span><span class="promo__timer-label">мин</span></div>
       <div class="promo__timer-sep">:</div>
