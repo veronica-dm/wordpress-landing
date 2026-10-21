@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Согласие на обработку персональных данных</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<!-- Marquiz: квиз открывается по кнопкам «Рассчитать» и «Обсудить проект», без автозапуска -->
+<script>
+(function(w, d, s, o){
+  var j = d.createElement(s); j.async = true; j.src = 'https://script.marquiz.ru/v2.js';j.onload = function() {
+    if (document.readyState !== 'loading') Marquiz.init(o);
+    else document.addEventListener("DOMContentLoaded", function() {
+      Marquiz.init(o);
+    });
+  };
+  d.head.insertBefore(j, d.head.firstElementChild);
+})(window, document, 'script', {
+    host: 'https://quiz.marquiz.ru',
+    region: 'ru',
+    id: '6ad296e0a3fe9c0010ec0de9',
+    autoOpen: false,
+    autoOpenFreq: 'once',
+    openOnExit: false,
+    disableOnMobile: false
+  }
+);
+</script>
+<script src="https://code.jivosite.com/widget/Oeh4rjBQPj" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===== Токены дизайн-системы (см. DESIGN.md) ===== */
+:root{
+  --red:#cf040e;--red-2:#da0812;--red-hover:#ff020e;
+  --ink:#151515;--black:#121212;--deep:#0d0d0d;
+  --canvas:#f7f7f7;--grey:#efefef;--grey-2:#d8d8d8;--line:#d8d8d8;
+  --muted:#797979;--white:#fff;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gap:160px
+}
+*{box-sizing:border-box;margin:0;padding:0}
+/* как в Tilda: браузер на телефоне не увеличивает шрифт отдельных блоков по своему усмотрению */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--canvas);color:var(--ink);font-family:Inter,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+ul{list-style:none}
+em{font-style:normal}
+.wrap{padding:0 40px}
+
+/* Иконки: inline SVG, цвет берётся из currentColor */
+.mi{display:inline-block;flex:none;line-height:0}
+.mi svg{width:100%;height:100%;display:block;fill:currentColor}
+.i-arrow{width:20px;height:20px}
+
+/* ===== Скроллбар (как модификатор T1084) ===== */
+::-webkit-scrollbar{width:15px;height:15px;background-color:#151515}
+::-webkit-scrollbar-track{background-color:#151515}
+::-webkit-scrollbar-thumb{background-color:#cf040e;border-radius:0;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background-color:#ff020e}
+@supports (-moz-appearance:none){:root,body{scrollbar-width:auto;scrollbar-color:#cf040e #151515}}
+/* ===== Кнопки ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:15px 20px;font-family:inherit;font-size:17px;font-weight:600;letter-spacing:-1px;line-height:1.55;border:0;cursor:pointer;transition:background-color .2s ease-out,color .2s}
+.btn .mi{transition:transform .2s ease-out}
+.btn:hover .mi{transform:translateX(3px)}
+.btn-red{background:var(--red);color:var(--grey)}
+.btn-red:hover{background:var(--red-hover)}
+.btn-light{background:var(--grey);color:var(--ink)}
+.btn-light:hover{background:#fff}
+/* ===== Меню ===== */
+/* размеры и брейкпоинты сняты с версии на Tilda (1920/1600/1200/960/640/480), чтобы страницы совпадали пиксель в пиксель */
+/* в начале страницы шапка — часть первого экрана, после 700px сверху выезжает фиксированная */
+nav{position:absolute;z-index:60;top:0;left:0;right:0}
+@keyframes navIn{from{transform:translateY(-100%)}to{transform:none}}
+@keyframes icoScale{0%,100%{transform:none}50%{transform:scale(.8)}}
+@keyframes icoBlink{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes icoIn{from{opacity:0}}
+nav .bar{padding:0 40px}
+nav .in{display:flex;align-items:center;justify-content:space-between;color:var(--grey)}
+nav:not(.scrolled) .in{padding:10px 0}
+.logo{width:300.6px;font-size:24px;font-weight:600;line-height:1;letter-spacing:-2px;white-space:nowrap}
+nav ul{display:flex}
+nav ul a{display:flex;align-items:center;gap:5px;width:120px;padding:10px 15px;font-size:18px;font-weight:600;line-height:1.55;letter-spacing:-1px;transition:color .2s ease-in-out}
+nav ul li:last-child a{width:140px}
+nav ul a:hover{color:var(--grey-2)}
+.nav-ar{display:none;width:27px;height:27px;animation:icoBlink 2s ease-in-out infinite}
+.nav-ar svg{animation:icoIn .2s}
+nav ul a:hover .nav-ar{display:block}
+.nav-r{display:flex}
+nav .btn-swap{width:169px;gap:5px;padding:10px 20px;font-size:17px;line-height:1.1;letter-spacing:0;background:var(--grey);color:var(--ink);transition:background-color .2s ease-in-out,color .2s ease-in-out}
+nav .btn-swap .mi,.hero .cta .btn .mi{width:27px;height:27px;animation:icoScale 2s ease-in-out infinite}
+nav .btn-swap:hover{background:var(--ink);color:var(--grey)}
+.burger{display:none;align-items:center;gap:11px;width:96px;padding:10px;background:var(--grey);color:var(--ink);border:0;cursor:pointer;font:inherit;font-size:16px;font-weight:600;line-height:1.55;letter-spacing:-1px;transition:background-color .2s ease-in-out,color .2s ease-in-out}
+.burger .mi{width:20px;height:20px}
+.burger:hover{background:var(--red);color:var(--grey)}
+nav.scrolled{position:fixed;animation:navIn .15s}
+nav.scrolled .bar{padding:5px 40px}
+nav.scrolled .in{padding:10px 30px;background:rgba(233,233,233,.5);-webkit-backdrop-filter:blur(50px);backdrop-filter:blur(50px);color:var(--ink)}
+nav.scrolled ul a:hover{color:var(--red)}
+nav.scrolled .btn-swap{background:var(--red);color:var(--grey)}
+nav.scrolled .btn-swap:hover{background:var(--red-2)}
+@media (min-width:1600px){
+  nav:not(.scrolled) .in{padding:15px 0}
+  nav.scrolled .bar{padding:5px 60px}
+  nav .btn-swap{width:auto}
+}
+@media (min-width:1920px){
+  nav:not(.scrolled) .bar{padding:0 60px}
+  nav:not(.scrolled) .in{padding:20px 0}
+}
+@media (max-width:1199px){
+  nav ul{display:none}
+  .logo{width:auto;font-size:20px;letter-spacing:-1px}
+  .burger{display:flex}
+  nav .btn-swap{width:164px;height:45px;padding:5px 20px;font-size:16px}
+  nav.scrolled .in{padding:10px 20px}
+  nav.scrolled .btn-swap:hover{background:var(--red-hover)}
+  nav.scrolled .burger{width:auto}
+}
+@media (max-width:959px){
+  nav:not(.scrolled) .bar{padding:0 20px}
+  nav:not(.scrolled) .in{padding:10px 10px 10px 0}
+  .logo{width:303px;font-size:18px;white-space:normal}
+  .nav-r{gap:5px;align-items:flex-start}
+  nav .btn-swap{width:auto;height:auto;padding:6px 20px;font-size:14px}
+  nav .btn-swap .mi{width:20px;height:20px}
+  .burger,nav.scrolled .burger{width:auto;padding:5px 15px 5px 10px;font-size:14px}
+  .burger .mi{width:15px;height:15px}
+  nav.scrolled .bar{padding:5px 0}
+}
+@media (max-width:639px){
+  .logo{width:162px}
+  nav .btn-swap,.burger{letter-spacing:-.5px}
+  nav.scrolled .in{padding:10px;justify-content:space-around}
+  nav.scrolled .logo{width:167px}
+}
+@media (max-width:479px){
+  .logo,nav.scrolled .logo{width:160px}
+  nav:not(.scrolled) .in{padding:10px 0}
+  .burger:hover{color:#fff}
+}
+
+.mmenu{position:fixed;inset:0;z-index:70;visibility:hidden;pointer-events:none;transition:visibility 0s .3s}
+.mmenu.open{visibility:visible;pointer-events:auto;transition:none}
+.mm-bg{position:absolute;inset:0;background:rgba(0,0,0,.3);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transition:opacity .3s}
+.mmenu.open .mm-bg{opacity:1}
+/* панель — как попап меню в Tilda: шапка, пункты посередине, контакты внизу */
+.mm-panel{position:absolute;top:0;right:0;bottom:0;width:450px;max-width:100%;background:#fff;padding:20px 40px;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-end;transform:translateX(100%);transition:transform .3s cubic-bezier(.76,0,.24,1)}
+.mmenu.open .mm-panel{transform:none}
+.mm-top{align-self:stretch;display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:40px}
+.mm-logo{flex:none;font-size:20px;line-height:1;letter-spacing:-1px;color:#151515}
+.mm-close{flex:none;background:none;border:0;padding:0;cursor:pointer;width:30px;height:30px}
+.mm-close img{display:block}
+.mm-nav{display:flex;flex-direction:column;align-items:flex-end;gap:16px}
+.mm-nav a{position:relative;padding:2px;font-size:16px;line-height:1.2;color:#151515;background:linear-gradient(#121212,#121212) 0 100%/100% 1.15px no-repeat;transition:color .2s ease-in-out}
+.mm-nav a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1.15px;background:var(--red);opacity:0;transition:opacity .2s ease-in-out}
+.mm-nav a:hover{color:var(--red)}
+.mm-nav a:hover::after{opacity:1}
+.mm-foot{display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-top:20px}
+.mm-soc{display:flex;flex-direction:column;gap:4px}
+.mm-soc a{position:relative;width:64px;height:64px}
+.mm-soc img{position:absolute;inset:0;width:100%;height:100%}
+.mm-soc img.hv{opacity:0;transition:opacity .2s}.mm-soc a:hover img.hv{opacity:1}
+.mm-ct{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.mm-mail{font-size:14px;line-height:17px;color:#121212;text-decoration:underline}
+.mm-hours{font-size:14px;line-height:21px;color:rgba(18,18,18,.5)}
+@media (max-width:959px){
+  .mm-panel{width:350px;padding:20px}
+  .mm-logo{width:303px;font-size:18px}
+}
+@media (max-width:639px){
+  .mm-panel{width:310px}
+  .mm-logo{width:139px;font-size:15px}
+  .mm-soc a{width:54px;height:54px}
+}
+@media (max-width:479px){
+  .mm-panel{width:300px;padding:16px 20px}
+  .mm-logo{width:160px;font-size:18px}
+  .mm-soc a{width:55px;height:54px}
+  .mm-mail{font-size:16px;line-height:19px}
+}
+/* ===== Подвал ===== */
+/* размеры и отступы сняты с подвала на Tilda по брейкпоинтам 1200 / 960 / 640 / 480 */
+footer{background:var(--ink);color:var(--grey);padding:100px 0}
+/* от 1200px: логотип слева, «Страницы», «Документы», «Свяжитесь с нами» прижаты к правому краю;
+   колонки ниже логотипа на 37px, ссылки с шагом 39px — «Контакты» на уровне последней строки реквизитов */
+.foot{display:grid;grid-template-columns:1fr 159px 331px auto}
+.foot > div:not(:first-child){padding-top:35px}
+.foot .logo{display:block;width:auto}
+.foot .btn{margin-top:30px;padding:15px;font-size:20px}
+.foot-req{margin-top:30px;color:var(--grey);font-size:14px;line-height:1.25}
+.foot .foot-t{margin-bottom:24px;font-size:16px;font-weight:400;line-height:1.2;color:#949494}
+.foot .foot-t.lt{color:var(--grey-2)}
+.foot-ct .foot-t{margin-bottom:22px}
+.foot li{margin-bottom:20px;line-height:1.2}
+.foot li:last-child{margin-bottom:0}
+.foot li a{transition:color .25s}.foot li a:hover{color:var(--red-2)}
+.soc{display:flex;gap:4px;margin-bottom:15px}
+.soc a{position:relative;width:34px;height:34px}
+.soc img{position:absolute;inset:0;width:100%;height:100%;transition:opacity .2s}
+.soc img.hv{opacity:0}
+.soc a:hover img.hv{opacity:1}
+.foot-mail{display:block;margin-bottom:11px;line-height:1.2;text-decoration:underline}
+.foot-hours{display:block;line-height:1.2}
+/* от 1920px: отступы больше, колонки начинаются с 910px от края контента */
+@media (min-width:1920px){
+  footer{padding:140px 0}
+  .foot{grid-template-columns:910px 179px 351px auto}
+}
+/* 960–1199: колонки идут сразу за блоком логотипа, шрифт 14px, шаг ссылок 33px */
+@media (max-width:1199px){
+  footer{padding-bottom:62px}
+  .foot{grid-template-columns:315px 149px 300px auto}
+  .foot > div:not(:first-child){padding-top:55px}
+  .foot .btn{margin-top:30px}
+  .foot .foot-t,.foot li,.foot-mail,.foot-hours{font-size:14px}
+  .foot .foot-t,.foot-ct .foot-t{margin-bottom:23px}
+  .foot li{margin-bottom:16px}
+  .foot-mail{margin-bottom:7px}
+  .soc{margin-bottom:16px}
+  /* «9:00-20:00 / ежедневно» — в две строки, как на Tilda */
+  .foot-hours{width:min-content;font-size:15px;line-height:1.4}
+}
+/* 640–959: логотип с реквизитами — отдельной строкой, под ним три колонки */
+@media (max-width:959px){
+  footer{padding:80px 0 64px}
+  .foot{grid-template-columns:114px 265px auto;row-gap:49px}
+  .foot > div:first-child{grid-column:1/-1}
+  .foot > div:not(:first-child){padding-top:0}
+  .foot .btn{margin-top:26px;font-size:16px}
+  .foot-req{margin-top:27px}
+}
+/* 480–639: «Свяжитесь с нами» уходит под «Страницы» и «Документы» */
+@media (max-width:639px){
+  footer{padding-bottom:42px}
+  .foot{grid-template-columns:109px auto;row-gap:42px}
+  .foot > div:last-child{grid-column:1/-1;margin-top:3px}
+  .foot .btn{font-size:17px}
+  .foot-req{font-size:12px}
+  .foot .foot-t{margin-bottom:13px}
+  .foot-ct .foot-t{margin-bottom:12px}
+  .soc a{width:44px;height:44px}
+}
+/* до 479: всё в одну колонку */
+@media (max-width:479px){
+  footer{padding-top:60px}
+  .foot{grid-template-columns:1fr;row-gap:45px}
+  .foot > div:first-child{margin-bottom:-3px}
+  .foot > div:last-child{margin-top:0}
+  .foot .docs li:not(:last-child){margin-bottom:10px}
+  .foot-mail{font-size:16px}
+  .foot-hours{width:auto}
+  .foot-mail{margin-bottom:10px}
+  .soc{margin-bottom:14px}
+}
+
+/* ===== Уведомление о cookie (как T886 в Tilda) ===== */
+/* z-index выше кнопки чата Jivo, чтобы она не закрывала «OK» */
+.cookie{position:fixed;right:40px;bottom:30px;z-index:2147483647;display:flex;align-items:center;width:500px;max-width:calc(100% - 40px);padding:15px 25px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.3)}
+.cookie[hidden]{display:none}
+.cookie p{padding-right:10px;font-size:12px;line-height:1.55;color:var(--ink)}
+.cookie a{color:var(--red)}
+.cookie button{flex-shrink:0;margin-left:auto;padding:15px 20px;border:0;background:var(--red);color:var(--grey);font:inherit;font-size:17px;font-weight:600;line-height:1.55;letter-spacing:-1px;cursor:pointer;transition:background-color .2s ease-in-out}
+.cookie button:hover{background:var(--red-hover)}
+@media (max-width:980px){.cookie{right:0;bottom:0;width:100%;max-width:none}}
+@media (max-width:959px){.cookie button{padding:10px 20px;font-size:16px}}
+@media (max-width:639px){.cookie p{line-height:1.45}}
+
+/* ===== Документ ===== */
+/* шапка на этих страницах сразу фиксированная — как после прокрутки первого экрана на главной */
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;line-height:14px;letter-spacing:-.5px;text-transform:uppercase;color:var(--red)}
+.eyebrow::before{content:"";width:10px;height:10px;background:var(--red)}
+.doc{padding:180px 0 120px}
+/* текст — на всю ширину контентной области, как на Tilda */
+.doc h1{margin-top:20px;font-size:52px;font-weight:600;line-height:1;letter-spacing:-3px}
+.doc-body{margin-top:64px}
+.doc-body h2{margin:48px 0 16px;font-size:25px;font-weight:600;line-height:1.1;letter-spacing:-.5px}
+.doc-body h2:first-child{margin-top:0}
+.doc-body h3{margin:28px 0 10px;font-size:18px;font-weight:600;line-height:1.3;letter-spacing:-.3px}
+.doc-body p{margin-bottom:10px}
+.doc-body ul{margin:0 0 14px}
+.doc-body li{position:relative;padding-left:22px;margin-bottom:6px}
+.doc-body li::before{content:"";position:absolute;left:4px;top:9px;width:6px;height:6px;background:var(--red)}
+.doc-body b{font-weight:600}
+.doc-body a{color:var(--red);text-decoration:underline;transition:color .2s}
+.doc-body a:hover{color:var(--red-hover)}
+.doc-body .url{overflow-wrap:anywhere}
+
+@media (min-width:1900px){.wrap{padding:0 60px}}
+@media (max-width:1199px){.doc{padding:150px 0 100px}.doc h1{font-size:40px;letter-spacing:-2.5px}}
+@media (max-width:959px){
+  .wrap{padding:0 20px}
+  .doc{padding:120px 0 80px}.doc h1{font-size:32px;letter-spacing:-2px}.doc-body{margin-top:40px}
+}
+@media (max-width:640px){.doc-body h2{font-size:22px}}
+@media (max-width:479px){.doc h1{font-size:28px;letter-spacing:-2px}}
+</style>
+</head>
+<body>
+
+<div class="mmenu" id="mmenu" aria-hidden="true">
+  <div class="mm-bg" id="mm-bg"></div>
+  <div class="mm-panel">
+    <div class="mm-top"><span class="mm-logo">Разработка сайтов на&nbsp;WordPress</span><button class="mm-close" id="mclose" aria-label="Закрыть меню"><img src="assets/icons/close.svg" alt="" width="30" height="30"></button></div>
+    <div class="mm-nav"><a href="/#services">Услуги</a><a href="/#projects">Кейсы</a><a href="/#price">Цены</a><a href="/#contact">Контакты</a></div>
+    <div class="mm-foot">
+      <div class="mm-soc">
+        <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
+        <a href="tel:+79652392724" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:Lukyanm@gmail.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+      </div>
+      <div class="mm-ct">
+        <a class="mm-mail" href="mailto:Lukyanm@gmail.com">Lukyanm@gmail.com</a>
+        <span class="mm-hours">9:00-20:00&nbsp;ежедневно</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav id="nav" class="scrolled"><div class="bar"><div class="in">
+    <a class="logo" href="/">Разработка сайтов на WordPress</a>
+    <ul><li><a href="/#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#projects">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#price">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#contact">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
+    <div class="nav-r"><a class="btn btn-swap" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать <i class="mi i-arrow"></i></a>
+    <button class="burger" id="burger" aria-label="Открыть меню"><i class="mi i-burger"></i>Меню</button></div>
+  </div></div></nav>
+
+<main class="doc"><div class="wrap">
+  <p class="eyebrow">Документы</p>
+  <h1>Согласие на обработку персональных данных</h1>
+  <div class="doc-body">
+    <p>Настоящим я, действуя свободно, своей волей и в своём интересе, даю согласие ИП Лукьянов Михаил Алексеевич на обработку моих персональных данных, предоставляемых посредством форм обратной связи, квиза и онлайн-чата на сайте, на котором размещено настоящее Согласие (далее — Сайт).</p>
+    <p><b>Цель обработки:</b> рассмотрение моей заявки на разработку сайта, предоставление консультации, подготовка коммерческого предложения и осуществление обратной связи по моему обращению.</p>
+    <p><b>Перечень персональных данных:</b> имя, номер телефона, адрес электронной почты, а также иные персональные данные, которые я добровольно укажу в сообщении.</p>
+    <p><b>Действия с персональными данными:</b> сбор, запись, систематизация, накопление, хранение, уточнение, извлечение, использование, передача в форме предоставления или доступа лицам, осуществляющим обработку по поручению Оператора, блокирование, удаление и уничтожение.</p>
+    <p>Обработка персональных данных может осуществляться с использованием средств автоматизации и без их использования.</p>
+    <p>Для технического обеспечения работы сайта и обработки заявок могут привлекаться хостинг-провайдер, сервисы приёма заявок и онлайн-чата и иные лица, указанные в Политике обработки персональных данных, в рамках предусмотренных законом оснований и договорных условий.</p>
+    <p>Согласие действует до достижения указанной цели обработки либо до его отзыва, если отсутствуют иные законные основания продолжения обработки.</p>
+    <p>Я вправе отозвать согласие, направив соответствующее заявление на электронную почту <b><a href="mailto:lukyanm@gmail.com">lukyanm@gmail.com</a></b>.</p>
+    <p>С Политикой в отношении обработки персональных данных, размещённой на Сайте в разделе «<a href="/policy">Политика конфиденциальности</a>», я ознакомлен(а).</p>
+  </div>
+</div></main>
+
+<footer><div class="wrap">
+  <div class="foot">
+    <div><a class="logo" href="/">Разработка сайтов на WordPress</a><a class="btn btn-red" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Обсудить проект <i class="mi i-arrow"></i></a>
+      <p class="foot-req">ИП Лукьянов Михаил Алексеевич<br>ИНН: 772080540278<br>ОГРНИП: 319774600279702<br>© Все права защищены, ИП Лукьянов М.А.</p></div>
+    <div><p class="foot-t">Страницы</p><ul><li><a href="/#services">Услуги</a></li><li><a href="/#projects">Кейсы</a></li><li><a href="/#price">Цены</a></li><li><a href="/#contact">Контакты</a></li></ul></div>
+    <div class="docs"><p class="foot-t">Документы</p><ul><li><a href="/policy">Политика конфиденциальности</a></li><li><a href="/soglasie">Согласие на обработку ПД</a></li></ul></div>
+    <div><p class="foot-t" style="color:#efefef;font-weight:500">Свяжитесь с нами</p>
+      <div class="soc">
+        <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
+        <a href="tel:+79652392724" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:Lukyanm@gmail.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+      </div>
+      <a class="foot-mail" href="mailto:Lukyanm@gmail.com">Lukyanm@gmail.com</a><span class="foot-hours">9:00-20:00 ежедневно</span></div>
+  </div>
+</div></footer>
+
+<!-- Уведомление о cookie: закрывается кнопкой OK, выбор запоминается в браузере -->
+<div class="cookie" id="cookie" hidden>
+  <p>Мы используем файлы cookie для корректной работы сайта, сохранения ваших настроек и анализа посещаемости. Подробнее — в <a href="/policy" target="_blank" rel="noopener">Политике обработки персональных данных</a></p>
+  <button type="button">OK</button>
+</div>
+
+<script>
+/* SVG-иконки (исходники в assets/icons) встроены, чтобы менять цвет при наведении */
+const ICONS = {"arrow": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M18.3311 11.3252C18.6431 11.6376 18.6434 12.1437 18.3311 12.4561L12.8301 17.957L11.6992 16.8262L15.7256 12.7998H6V11.2002H15.9443L11.6992 6.95508L12.2646 6.38965L12.8301 5.82324L18.3311 11.3252Z\" fill=\"currentColor\"/> </svg>", "tel": "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" id=\"Capa_1\" x=\"0px\" y=\"0px\" viewBox=\"0 0 480.56 480.56\" style=\"enable-background:new 0 0 480.56 480.56;\" xml:space=\"preserve\"> <g> <g> <path d=\"M365.354,317.9c-15.7-15.5-35.3-15.5-50.9,0c-11.9,11.8-23.8,23.6-35.5,35.6c-3.2,3.3-5.9,4-9.8,1.8 c-7.7-4.2-15.9-7.6-23.3-12.2c-34.5-21.7-63.4-49.6-89-81c-12.7-15.6-24-32.3-31.9-51.1c-1.6-3.8-1.3-6.3,1.8-9.4 c11.9-11.5,23.5-23.3,35.2-35.1c16.3-16.4,16.3-35.6-0.1-52.1c-9.3-9.4-18.6-18.6-27.9-28c-9.6-9.6-19.1-19.3-28.8-28.8 c-15.7-15.3-35.3-15.3-50.9,0.1c-12,11.8-23.5,23.9-35.7,35.5c-11.3,10.7-17,23.8-18.2,39.1c-1.9,24.9,4.2,48.4,12.8,71.3 c17.6,47.4,44.4,89.5,76.9,128.1c43.9,52.2,96.3,93.5,157.6,123.3c27.6,13.4,56.2,23.7,87.3,25.4c21.4,1.2,40-4.2,54.9-20.9 c10.2-11.4,21.7-21.8,32.5-32.7c16-16.2,16.1-35.8,0.2-51.8C403.554,355.9,384.454,336.9,365.354,317.9z\"></path> <path d=\"M346.254,238.2l36.9-6.3c-5.8-33.9-21.8-64.6-46.1-89c-25.7-25.7-58.2-41.9-94-46.9l-5.2,37.1 c27.7,3.9,52.9,16.4,72.8,36.3C329.454,188.2,341.754,212,346.254,238.2z\"></path> <path d=\"M403.954,77.8c-42.6-42.6-96.5-69.5-156-77.8l-5.2,37.1c51.4,7.2,98,30.5,134.8,67.2c34.9,34.9,57.8,79,66.1,127.5 l36.9-6.3C470.854,169.3,444.354,118.3,403.954,77.8z\"></path> </g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> <g> </g> </svg>", "mail": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_2\" viewBox=\"0 0 512 512\"><g><path d=\"m0 403.7 156.7-151.6-156.7-138.7z\"></path><path d=\"m512 406v-290l-156.5 138.6z\"></path><path d=\"m497 86.8c-.3 0-.6 0-.9 0h-478.1l228.1 201.9c.4.3.8.7 1.2 1 .1.1.2.1.3.2.3.2.6.4 1 .6.1.1.2.1.3.2.3.2.7.4 1 .5.1 0 .2.1.3.1.4.2.8.3 1.1.5.1 0 .2.1.2.1.4.2.8.3 1.3.4h.2c.5.1 1 .2 1.4.3 1 .2 2 .3 3 .3.4 0 .8 0 1.1-.1.2 0 .4 0 .7-.1.3 0 .5-.1.8-.1.2 0 .4-.1.7-.1.3-.1.6-.1.9-.2.2 0 .3-.1.5-.1.4-.1.7-.2 1.1-.3.1 0 .2-.1.3-.1.4-.1.8-.3 1.2-.5.1 0 .2-.1.2-.1.4-.2.8-.4 1.2-.6.1 0 .1-.1.2-.1.4-.2.7-.5 1.1-.7.1-.1.1-.1.2-.1.4-.3.8-.6 1.2-1z\"></path><path d=\"m486.1 425.3-154.5-149.5-41.6 36.7c-8.4 7.5-19.3 11.8-30.5 12.3-2.1.1-4.2 0-6.4-.1-10.5-.9-20.2-5.1-28.2-12.1l-44.3-39.2-157.1 152h462.6z\"></path></g></svg>", "tg": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_2\" viewBox=\"0 0 32 32\"><g><path d=\"m2.61743 15.83185 6.44043 2.18732 15.29034-9.34778c.22162-.13556.44873.16547.25757.34143l-11.57592 10.65509-.43048 5.96521c-.03278.4538.51385.70642.83826.38745l3.56421-3.50482 6.51569 4.93243c.70233.53174 1.7193.15698 1.90875-.70331l4.53692-20.59997c.25879-1.17517-.8927-2.16681-2.01648-1.73645l-25.36206 9.71179c-.7956.30469-.77393 1.43768.03277 1.71161z\"></path></g></svg>", "web": "<svg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" viewBox=\"0 0 512 512\"><path clip-rule=\"evenodd\" d=\"m256 18.456c131.192 0 237.544 106.352 237.544 237.544s-106.352 237.544-237.544 237.544-237.544-106.352-237.544-237.544 106.352-237.544 237.544-237.544zm64.678 377.505c32.104-14.89 58.237-40.516 73.819-72.236h-50.998c-1.595 8.396-3.436 16.641-5.603 24.702-4.54 17.201-10.388 33.224-17.218 47.534zm-97.661 10.674c10.633 2.323 21.675 3.562 33.003 3.562 11.288 0 22.33-1.239 32.963-3.562 14.191-21.659 24.988-50.475 31.49-82.91h-128.947c6.503 32.427 17.3 61.251 31.491 82.91zm-105.514-82.91c15.582 31.72 41.715 57.337 73.819 72.236-6.83-14.31-12.678-30.333-17.217-47.534-2.168-8.061-4.008-16.306-5.603-24.702zm68.666-205.183c-29.732 15.173-53.943 39.723-68.666 69.725h49.485c4.09-25.242 10.593-48.905 19.181-69.725zm109.153-11.647c-12.556-3.317-25.724-5.092-39.302-5.092-13.619 0-26.787 1.775-39.343 5.092-12.392 22.432-21.553 50.475-26.869 81.372h132.383c-5.316-30.898-14.477-58.94-26.869-81.372zm99.175 81.372c-14.723-30.006-38.933-54.561-68.665-69.725 8.588 20.82 15.091 44.483 19.18 69.725zm-209.964 63.214c0 16.956 1.145 33.65 3.272 49.714h136.391c2.127-16.065 3.272-32.759 3.272-49.714 0-13.799-.736-27.425-2.168-40.684h-138.599c-1.432 13.259-2.168 26.885-2.168 40.684zm-81.916 20.371c1.022 10.102 3.067 19.917 5.971 29.344h56.437c-2.004-16.117-3.026-32.726-3.026-49.714 0-13.758.695-27.376 2.045-40.684h-55.456c-2.903 9.435-4.948 19.25-5.971 29.347 0 .078 0 .147-.041.225-.245 2.487-.409 4.993-.572 7.508v.646c-.041.986-.082 1.971-.123 2.957 0 .311 0 .626-.041.936 0 1.19-.041 2.388-.041 3.583 0 1.198.041 2.392.041 3.582.041.311.041.63.041.937.041.986.082 1.971.123 2.957v.642c.164 2.519.327 5.026.572 7.513.041.077.041.147.041.221zm307.543-12.269c0-1.19.041-2.384.041-3.582 0-1.194-.041-2.392-.041-3.583 0-.311-.041-.626-.041-.936 0-.986-.041-1.971-.123-2.957 0-.213 0-.43 0-.646-.164-2.515-.327-5.022-.573-7.508-.041-.078-.041-.147-.041-.225-1.022-10.097-3.067-19.913-5.971-29.347h-55.456c1.35 13.308 2.045 26.926 2.045 40.684 0 16.988-1.022 33.597-3.026 49.714h56.437c2.904-9.427 4.949-19.242 5.971-29.344 0-.074 0-.143.041-.221.245-2.487.409-4.994.573-7.513 0-.213 0-.429 0-.642.082-.986.123-1.971.123-2.957 0-.308.041-.626.041-.937zm21.062 19.442c.164-1.022.286-2.049.368-3.076.041-.388.123-.777.164-1.157.082-.859.164-1.717.245-2.568.041-.573.082-1.141.123-1.706.082-.74.123-1.484.163-2.225.082-.703.123-1.415.164-2.127 0-.634.041-1.268.082-1.906.041-.867.082-1.734.082-2.605.041-.503.041-1.002.082-1.501 0-1.386.041-2.769.041-4.155s-.041-2.773-.041-4.155c-.041-.499-.041-.998-.082-1.497 0-.867-.041-1.742-.082-2.613-.041-.634-.082-1.268-.082-1.893-.041-.72-.082-1.431-.164-2.143-.041-.736-.082-1.468-.163-2.2-.041-.581-.082-1.149-.123-1.726-.082-.855-.163-1.705-.245-2.556-.041-.389-.123-.781-.164-1.178-.082-1.018-.204-2.032-.368-3.055 0-.086 0-.168 0-.253-5.03-38.386-22.411-73.864-50.262-101.69-33.372-33.384-77.745-51.767-124.94-51.767-47.236 0-91.609 18.383-124.98 51.767-27.81 27.826-45.232 63.296-50.262 101.678v.274c-.164 1.014-.286 2.028-.368 3.039-.041.397-.082.797-.123 1.19-.123.846-.204 1.697-.286 2.552-.041.569-.082 1.145-.123 1.726-.082.732-.123 1.464-.164 2.2-.041.712-.082 1.423-.164 2.143 0 .626-.041 1.26-.082 1.893-.041.871-.082 1.747-.082 2.613-.041.499-.041.998-.082 1.497 0 1.382-.041 2.769-.041 4.155 0 1.387.041 2.769.041 4.155.041.499.041.998.082 1.501 0 .871.041 1.738.082 2.605.041.638.082 1.272.082 1.906.082.712.123 1.423.164 2.127.041.741.082 1.485.164 2.225.041.564.082 1.133.123 1.698.082.859.163 1.717.286 2.576.041.389.082.769.123 1.157.082 1.027.204 2.053.368 3.076v.225c5.03 38.394 22.411 73.88 50.262 101.715 33.372 33.38 77.745 51.763 124.98 51.763 47.195 0 91.568-18.383 124.94-51.763 27.851-27.834 45.232-63.329 50.262-101.723 0-.071 0-.14 0-.218z\" fill-rule=\"evenodd\"></path></svg>", "burger": "<svg viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"> <path d=\"M4.04688 16.1855V18.1855H20V16.1855H4.04688ZM4.04688 12.8682H20V10.8682H4.04688V12.8682ZM4.04688 7.5498H20V5.5498H4.04688V7.5498Z\" fill=\"currentColor\"/> </svg>"};
+[["i-arrow","arrow"],["i-burger","burger"]].forEach(([cls, k]) => document.querySelectorAll("." + cls).forEach((e) => (e.innerHTML = ICONS[k])));
+
+/* Меню */
+const mm = document.getElementById("mmenu");
+document.getElementById("burger").onclick = () => { mm.classList.add("open"); mm.setAttribute("aria-hidden", "false"); };
+document.getElementById("mm-bg").onclick = () => mm.classList.remove("open");
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") mm.classList.remove("open"); });
+document.getElementById("mclose").onclick = () => mm.classList.remove("open");
+mm.querySelectorAll("a").forEach((a) => (a.onclick = () => mm.classList.remove("open")));
+
+/* Уведомление о cookie */
+(() => {
+  const box = document.getElementById("cookie"), key = "cookie_ok";
+  try { if (localStorage.getItem(key)) return; } catch (e) {}
+  box.hidden = false;
+  box.querySelector("button").onclick = () => {
+    box.hidden = true;
+    try { localStorage.setItem(key, Math.floor(Date.now() / 1000)); } catch (e) {}
+  };
+})();
+</script>
+</body>
+</html>

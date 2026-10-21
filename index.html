@@ -51,6 +51,8 @@
   --gap:160px
 }
 *{box-sizing:border-box;margin:0;padding:0}
+/* как в Tilda: браузер на телефоне не увеличивает шрифт отдельных блоков по своему усмотрению */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{background:var(--canvas);color:var(--ink);font-family:Inter,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:clip}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
@@ -774,7 +776,8 @@ html{overflow-x:clip}
 .dots button.on{background:var(--red)}
 
 /* ===== 11. Контакты ===== */
-.channels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.channels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:768px){.channels{grid-template-columns:1fr}}
 .ch{background:#e8e8e8;color:var(--ink);padding:24px 24px 26px;min-height:144px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;border:2px solid transparent;transition:background .3s,color .3s,border-color .3s}
 .ch .mi{width:28px;height:28px;margin-bottom:auto}
 .ch b{font-size:16px;font-weight:600}
@@ -819,18 +822,91 @@ form.done .sent{display:block}
 .ans-body b{color:var(--ink);font-weight:600}
 
 /* ===== Подвал ===== */
-footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
-.foot{display:grid;grid-template-columns:2fr .7fr 1.3fr 1fr;gap:20px}
-.foot .btn{margin-top:110px}
-.foot .foot-t{font-weight:400;color:#949494;margin-bottom:22px;font-size:16px}
-.foot li{margin-bottom:16px;font-weight:500}
+/* размеры и отступы сняты с подвала на Tilda по брейкпоинтам 1200 / 960 / 640 / 480 */
+footer{background:var(--ink);color:var(--grey);padding:100px 0}
+/* от 1200px: логотип слева, «Страницы», «Документы», «Свяжитесь с нами» прижаты к правому краю;
+   колонки ниже логотипа на 37px, ссылки с шагом 39px — «Контакты» на уровне последней строки реквизитов */
+.foot{display:grid;grid-template-columns:1fr 159px 331px auto}
+.foot > div:not(:first-child){padding-top:35px}
+.foot .logo{display:block;width:auto}
+.foot .btn{margin-top:30px;padding:15px;font-size:20px}
+.foot-req{margin-top:30px;color:var(--grey);font-size:14px;line-height:1.25}
+.foot .foot-t{margin-bottom:24px;font-size:16px;font-weight:400;line-height:1.2;color:#949494}
+.foot .foot-t.lt{color:var(--grey-2)}
+.foot-ct .foot-t{margin-bottom:22px}
+.foot li{margin-bottom:20px;line-height:1.2}
+.foot li:last-child{margin-bottom:0}
 .foot li a{transition:color .25s}.foot li a:hover{color:var(--red-2)}
-.soc{display:flex;gap:4px;margin-bottom:14px}
+.soc{display:flex;gap:4px;margin-bottom:15px}
 .soc a{position:relative;width:34px;height:34px}
 .soc img{position:absolute;inset:0;width:100%;height:100%;transition:opacity .2s}
 .soc img.hv{opacity:0}
 .soc a:hover img.hv{opacity:1}
-.foot u{display:block;margin-bottom:6px;font-weight:500}
+.foot-mail{display:block;margin-bottom:11px;line-height:1.2;text-decoration:underline}
+.foot-hours{display:block;line-height:1.2}
+/* от 1920px: отступы больше, колонки начинаются с 910px от края контента */
+@media (min-width:1920px){
+  footer{padding:140px 0}
+  .foot{grid-template-columns:910px 179px 351px auto}
+}
+/* 960–1199: колонки идут сразу за блоком логотипа, шрифт 14px, шаг ссылок 33px */
+@media (max-width:1199px){
+  footer{padding-bottom:62px}
+  .foot{grid-template-columns:315px 149px 300px auto}
+  .foot > div:not(:first-child){padding-top:55px}
+  .foot .btn{margin-top:30px}
+  .foot .foot-t,.foot li,.foot-mail,.foot-hours{font-size:14px}
+  .foot .foot-t,.foot-ct .foot-t{margin-bottom:23px}
+  .foot li{margin-bottom:16px}
+  .foot-mail{margin-bottom:7px}
+  .soc{margin-bottom:16px}
+  /* «9:00-20:00 / ежедневно» — в две строки, как на Tilda */
+  .foot-hours{width:min-content;font-size:15px;line-height:1.4}
+}
+/* 640–959: логотип с реквизитами — отдельной строкой, под ним три колонки */
+@media (max-width:959px){
+  footer{padding:80px 0 64px}
+  .foot{grid-template-columns:114px 265px auto;row-gap:49px}
+  .foot > div:first-child{grid-column:1/-1}
+  .foot > div:not(:first-child){padding-top:0}
+  .foot .btn{margin-top:26px;font-size:16px}
+  .foot-req{margin-top:27px}
+}
+/* 480–639: «Свяжитесь с нами» уходит под «Страницы» и «Документы» */
+@media (max-width:639px){
+  footer{padding-bottom:42px}
+  .foot{grid-template-columns:109px auto;row-gap:42px}
+  .foot > div:last-child{grid-column:1/-1;margin-top:3px}
+  .foot .btn{font-size:17px}
+  .foot-req{font-size:12px}
+  .foot .foot-t{margin-bottom:13px}
+  .foot-ct .foot-t{margin-bottom:12px}
+  .soc a{width:44px;height:44px}
+}
+/* до 479: всё в одну колонку */
+@media (max-width:479px){
+  footer{padding-top:60px}
+  .foot{grid-template-columns:1fr;row-gap:45px}
+  .foot > div:first-child{margin-bottom:-3px}
+  .foot > div:last-child{margin-top:0}
+  .foot .docs li:not(:last-child){margin-bottom:10px}
+  .foot-mail{font-size:16px}
+  .foot-hours{width:auto}
+  .foot-mail{margin-bottom:10px}
+  .soc{margin-bottom:14px}
+}
+
+/* ===== Уведомление о cookie (как T886 в Tilda) ===== */
+/* z-index выше кнопки чата Jivo, чтобы она не закрывала «OK» */
+.cookie{position:fixed;right:40px;bottom:30px;z-index:2147483647;display:flex;align-items:center;width:500px;max-width:calc(100% - 40px);padding:15px 25px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.3)}
+.cookie[hidden]{display:none}
+.cookie p{padding-right:10px;font-size:12px;line-height:1.55;color:var(--ink)}
+.cookie a{color:var(--red)}
+.cookie button{flex-shrink:0;margin-left:auto;padding:15px 20px;border:0;background:var(--red);color:var(--grey);font:inherit;font-size:17px;font-weight:600;line-height:1.55;letter-spacing:-1px;cursor:pointer;transition:background-color .2s ease-in-out}
+.cookie button:hover{background:var(--red-hover)}
+@media (max-width:980px){.cookie{right:0;bottom:0;width:100%;max-width:none}}
+@media (max-width:959px){.cookie button{padding:10px 20px;font-size:16px}}
+@media (max-width:639px){.cookie p{line-height:1.45}}
 .copy{background:#000;color:#666;font-size:13px;text-align:center;padding:20px}
 
 @keyframes dash{to{stroke-dashoffset:-16}}
@@ -927,11 +1003,9 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .price-card{grid-row:auto;display:flex;flex-direction:column}
   .price-card .price-btn{margin-top:auto}
   .slide{padding:0}.slider{padding-bottom:0;margin:0}.slides{padding:0}.arrow{top:auto;bottom:-13px;transform:none;width:40px;height:40px}.arrow.l{left:0}.arrow.r{right:0}.dots{margin-top:46px}
-  .channels{grid-template-columns:1fr 1fr}
   .form-wrap{margin-top:60px;gap:40px}.form-img{order:-1;height:300px}
   form .btn{justify-self:stretch;justify-content:center}
   .ans-body{padding:0 20px 24px 20px}
-  .foot{grid-template-columns:1fr 1fr}.foot .btn{margin-top:28px}
 }
 @media (max-width:640px){
   h2{font-size:30px;letter-spacing:-1.5px}
@@ -957,7 +1031,6 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   .chips span{font-size:14px;padding:4px 12px}
   .speed-l,.report{padding:24px 20px}.metrics{grid-template-columns:1fr}.g svg{width:80px;height:80px}
   .q button{padding:12px 12px 12px 20px;min-height:70px;font-size:16px;letter-spacing:-.3px}.plus{width:40px;height:40px}.plus::before,.plus::after{width:20px}
-  .foot{grid-template-columns:1fr}
 }
 @media (max-width:479px){
   nav .btn-swap{display:none}
@@ -982,15 +1055,15 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   <div class="mm-bg" id="mm-bg"></div>
   <div class="mm-panel">
     <div class="mm-top"><span class="mm-logo">Разработка сайтов на&nbsp;WordPress</span><button class="mm-close" id="mclose" aria-label="Закрыть меню"><img src="assets/icons/close.svg" alt="" width="30" height="30"></button></div>
-    <div class="mm-nav"><a href="#services">Услуги</a><a href="#cases">Кейсы</a><a href="#prices">Цены</a><a href="#contacts">Контакты</a></div>
+    <div class="mm-nav"><a href="/#services">Услуги</a><a href="/#projects">Кейсы</a><a href="/#price">Цены</a><a href="/#contact">Контакты</a></div>
     <div class="mm-foot">
       <div class="mm-soc">
         <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
-        <a href="tel:+7" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
-        <a href="mailto:hello@studio.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+        <a href="tel:+79652392724" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:Lukyanm@gmail.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
       </div>
       <div class="mm-ct">
-        <a class="mm-mail" href="mailto:hello@studio.com">hello@studio.com</a>
+        <a class="mm-mail" href="mailto:Lukyanm@gmail.com">Lukyanm@gmail.com</a>
         <span class="mm-hours">9:00-20:00&nbsp;ежедневно</span>
       </div>
     </div>
@@ -1002,7 +1075,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 <header class="hero">
   <nav id="nav"><div class="bar"><div class="in">
     <a class="logo" href="/">Разработка сайтов на WordPress</a>
-    <ul><li><a href="#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#cases">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#prices">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="#contacts">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
+    <ul><li><a href="/#services">Услуги<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#projects">Кейсы<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#price">Цены<i class="mi i-arrow nav-ar"></i></a></li><li><a href="/#contact">Контакты<i class="mi i-arrow nav-ar"></i></a></li></ul>
     <div class="nav-r"><a class="btn btn-swap" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать <i class="mi i-arrow"></i></a>
     <button class="burger" id="burger" aria-label="Открыть меню"><i class="mi i-burger"></i>Меню</button></div>
   </div></div></nav>
@@ -1014,7 +1087,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
         <p>Создаём быстрый сайт на&nbsp;WordPress и&nbsp;связываем его с&nbsp;рекламой, CRM и&nbsp;аналитикой. Сайт полностью ваш, без&nbsp;абонентской платы конструктору, и&nbsp;работает как понятная система: от&nbsp;первого перехода до&nbsp;заявки и&nbsp;продажи.</p>
       </div>
       <div class="cta">
-        <a class="btn btn-light" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a>
+        <a class="btn btn-light" href="#projects">Смотреть кейсы <i class="mi i-arrow"></i></a>
         <a class="btn btn-light" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Рассчитать проект <i class="mi i-arrow"></i></a>
       </div>
     </div>
@@ -1097,7 +1170,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
   <div class="types-head">
     <div class="left">
       <div><p class="eyebrow eb-bold fu">Разработка под задачу</p><h2 class="rv">Подбираем платформу под задачу бизнеса и&nbsp;<em>требования проекта</em></h2></div>
-      <div class="fu d2"><a class="btn btn-red" href="#cases">Смотреть кейсы <i class="mi i-arrow"></i></a></div>
+      <div class="fu d2"><a class="btn btn-red" href="#projects">Смотреть кейсы <i class="mi i-arrow"></i></a></div>
     </div>
     <div class="types-right fu d2">
       <p class="descr">Лендинги для рекламы, корпоративные сайты для бизнеса, интернет-магазины для продаж. Работаем с разными платформами и выбираем ту, которая лучше подходит под задачи проекта.</p>
@@ -1257,7 +1330,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 </div></section>
 
 <!-- 7. Кейсы -->
-<section class="sec" id="cases"><div class="wrap">
+<section class="sec" id="projects"><div class="wrap">
   <div class="head">
     <div><p class="eyebrow fu">Портфолио</p><h2 class="rv">Проекты, которые работают <em>на результат</em></h2></div>
     <p class="descr fu d2">Каждый сайт проектируем под конкретное действие пользователя — заявку, запись, покупку или обращение — и продвигаем его. Ниже — что это дало бизнесу клиентов.</p>
@@ -1325,7 +1398,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 </div></section>
 
 <!-- 9. Тарифы -->
-<section class="sec" id="prices"><div class="wrap">
+<section class="sec" id="price"><div class="wrap">
   <div class="head">
     <div><p class="eyebrow fu">Пакеты</p><h2 class="rv">Тарифы под&nbsp;<em>вашу задачу</em></h2></div>
     <p class="descr fu d2">От лендинга до системы продаж. Без скрытых доплат — стоимость определяем после короткого разбора задачи.</p>
@@ -1355,17 +1428,20 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 </div></section>
 
 <!-- 11. Контакты -->
-<section class="sec" id="contacts"><div class="wrap">
+<section class="sec" id="contact"><div class="wrap">
   <div class="head">
     <div><p class="eyebrow fu">Контакты</p><h2 class="rv">Обсудим <em>ваш проект</em></h2></div>
     <p class="descr fu d2">Расскажите, какой сайт нужен и какую задачу он&nbsp;должен решать.<br>Посмотрим на проект целиком: от структуры до рекламы, CRM и аналитики.</p>
   </div>
   <div class="channels">
-    <a class="ch fu" href="tel:+7"><i class="mi i-tel"></i><b>Позвонить</b><small>+7</small></a>
-    <a class="ch fu d1" href="mailto:hello@studio.com"><i class="mi i-mail"></i><b>Написать на эл. почту</b><small>hello@studio.com</small></a>
+    <a class="ch fu" href="tel:+79652392724"><i class="mi i-tel"></i><b>Позвонить</b><small>+79652392724</small></a>
+    <a class="ch fu d1" href="mailto:Lukyanm@gmail.com"><i class="mi i-mail"></i><b>Написать на эл. почту</b><small>Lukyanm@gmail.com</small></a>
     <a class="ch fu d2" href="https://t.me/advgid"><i class="mi i-tg"></i><b>Написать в Телеграм</b><small>@advgid</small></a>
-    <a class="ch out fu d3" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9"><i class="mi i-web"></i><b>Оставить заявку на сайте</b></a>
+    <!-- Пока скрыто, как в Tilda (может пригодиться вместе с формой ниже):
+    <a class="ch out fu d3" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9"><i class="mi i-web"></i><b>Оставить заявку на сайте</b></a>
+    -->
   </div>
+  <!-- Форма заявки пока скрыта, как в Tilda (может пригодиться):
   <div class="form-wrap">
     <div>
       <h3 class="fu">Расскажите о проекте — предложим подходящий формат</h3>
@@ -1382,6 +1458,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
     </div>
     <div class="form-img zi d2"><img src="assets/img/contact.webp" alt="Разработчик за работой"></div>
   </div>
+  -->
 </div></section>
 
 <!-- 12. FAQ -->
@@ -1392,18 +1469,25 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0 60px}
 
 <footer><div class="wrap">
   <div class="foot">
-    <div><a class="logo" href="/">Разработка сайтов на WordPress</a><br><a class="btn btn-red" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Обсудить проект <i class="mi i-arrow"></i></a></div>
-    <div><p class="foot-t">Страницы</p><ul><li><a href="#services">Услуги</a></li><li><a href="#cases">Кейсы</a></li><li><a href="#prices">Цены</a></li><li><a href="#contacts">Контакты</a></li></ul></div>
-    <div><p class="foot-t">Документы</p><ul><li><a href="#">Политика конфиденциальности</a></li><li><a href="#">Согласие на обработку ПД</a></li></ul></div>
+    <div><a class="logo" href="/">Разработка сайтов на WordPress</a><a class="btn btn-red" href="#popup:marquiz_6ad296e0a3fe9c0010ec0de9">Обсудить проект <i class="mi i-arrow"></i></a>
+      <p class="foot-req">ИП Лукьянов Михаил Алексеевич<br>ИНН: 772080540278<br>ОГРНИП: 319774600279702<br>© Все права защищены, ИП Лукьянов М.А.</p></div>
+    <div><p class="foot-t">Страницы</p><ul><li><a href="/#services">Услуги</a></li><li><a href="/#projects">Кейсы</a></li><li><a href="/#price">Цены</a></li><li><a href="/#contact">Контакты</a></li></ul></div>
+    <div class="docs"><p class="foot-t">Документы</p><ul><li><a href="/policy">Политика конфиденциальности</a></li><li><a href="/soglasie">Согласие на обработку ПД</a></li></ul></div>
     <div><p class="foot-t" style="color:#efefef;font-weight:500">Свяжитесь с нами</p>
       <div class="soc">
         <a href="https://t.me/advgid" aria-label="Telegram"><img src="assets/icons/tg.svg" alt=""><img class="hv" src="assets/icons/tg_hover.svg" alt=""></a>
-        <a href="tel:+7" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
-        <a href="mailto:hello@studio.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
+        <a href="tel:+79652392724" aria-label="Телефон"><img src="assets/icons/phone.svg" alt=""><img class="hv" src="assets/icons/phone_hover.svg" alt=""></a>
+        <a href="mailto:Lukyanm@gmail.com" aria-label="Почта"><img src="assets/icons/email.svg" alt=""><img class="hv" src="assets/icons/email_hover.svg" alt=""></a>
       </div>
-      <u>hello@studio.com</u><span style="font-weight:500">9:00-20:00&nbsp;ежедневно</span></div>
+      <a class="foot-mail" href="mailto:Lukyanm@gmail.com">Lukyanm@gmail.com</a><span class="foot-hours">9:00-20:00 ежедневно</span></div>
   </div>
 </div></footer>
+
+<!-- Уведомление о cookie: закрывается кнопкой OK, выбор запоминается в браузере -->
+<div class="cookie" id="cookie" hidden>
+  <p>Мы используем файлы cookie для корректной работы сайта, сохранения ваших настроек и анализа посещаемости. Подробнее — в <a href="/policy" target="_blank" rel="noopener">Политике обработки персональных данных</a></p>
+  <button type="button">OK</button>
+</div>
 
 </div>
 <script>
@@ -1767,8 +1851,19 @@ document.querySelectorAll("[data-count]").forEach((el) => cio.observe(el));
 const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
 document.querySelectorAll(".fu,.zi").forEach((el) => io.observe(el));
 
-/* Форма (демо — без отправки на сервер) */
-document.getElementById("form").addEventListener("submit", (e) => {
+/* Уведомление о cookie */
+(() => {
+  const box = document.getElementById("cookie"), key = "cookie_ok";
+  try { if (localStorage.getItem(key)) return; } catch (e) {}
+  box.hidden = false;
+  box.querySelector("button").onclick = () => {
+    box.hidden = true;
+    try { localStorage.setItem(key, Math.floor(Date.now() / 1000)); } catch (e) {}
+  };
+})();
+
+/* Форма (демо — без отправки на сервер); сейчас закомментирована в разметке */
+document.getElementById("form")?.addEventListener("submit", (e) => {
   e.preventDefault();
   const f = e.target, bad = [...f.querySelectorAll("[required]")].filter((i) => i.type === "checkbox" ? !i.checked : !i.value.trim());
   bad.forEach((i) => { i.style.borderColor = "#ff020e"; const clr = () => (i.style.borderColor = ""); i.addEventListener("input", clr, { once: true }); i.addEventListener("change", clr, { once: true }); });
