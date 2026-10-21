@@ -1,2 +1,7 @@
 # Своя страница «Не найдено» (Apache). На nginx — строка error_page 404 /404.html; в конфиге сайта.
 ErrorDocument 404 /404.html
+
+# Адреса без .html: /policy открывает policy.html, /soglasie — soglasie.html
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^./]+)/?$ $1.html [L]
