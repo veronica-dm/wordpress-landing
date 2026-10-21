@@ -1,0 +1,2 @@
+# Своя страница «Не найдено» (Apache). На nginx — строка error_page 404 /404.html; в конфиге сайта.
+ErrorDocument 404 /404.html
