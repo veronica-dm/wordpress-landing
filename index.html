@@ -337,9 +337,9 @@ nav.scrolled .btn-swap:hover{background:var(--red-2)}
 .info:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .tip{position:absolute;right:130px;bottom:calc(100% - 14px);width:200px;background:#f2f2f2;color:var(--ink);font-size:14px;line-height:1.4;padding:14px;box-shadow:0 0 10px #0000002e;z-index:8;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s}
 .row.tip-on .tip{opacity:1;pointer-events:auto;transform:none}
-.pop{position:absolute;right:-5px;top:12px;width:160px;pointer-events:none;opacity:0;transform:rotate(4deg) scale(.92);transition:opacity .35s var(--ease),transform .45s var(--ease);z-index:5;box-shadow:0 10px 25px #0003}
-.row.hov .pop{opacity:1;transform:rotate(4deg)}
-@media (min-width:1200px) and (max-width:1899px){.pop{transform:scale(.92)}.row.hov .pop{transform:none}}
+.pop{position:absolute;right:-5px;top:12px;width:160px;pointer-events:none;opacity:0;transform:rotate(var(--r)) scale(.92);transition:opacity .35s var(--ease),transform .45s var(--ease);z-index:5;box-shadow:0 10px 25px #0003}
+.row.hov .pop{opacity:1;transform:rotate(var(--r))}
+.row:nth-of-type(odd) .pop{--r:-6deg}.row:nth-of-type(even) .pop{--r:5deg}
 
 /* ===== 3. Цифры ===== */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #b5b5b5;padding-top:86px}
@@ -924,20 +924,22 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0}
   .compare{grid-template-rows:auto}
   .col{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto 1fr;align-items:stretch;padding:30px}
   .col > h3{grid-column:1/-1;font-size:52px;border-bottom:0;padding-bottom:48px}
-  .row{min-height:640px;border-bottom:0;border-left:1px solid #ffffff2e;padding:0 20px}
+  .row{min-height:0;border-bottom:0;border-left:1px solid #ffffff2e;padding:0 20px}
   .col.light .row{border-left-color:#0000001f}
   .col .row:nth-of-type(2){padding-top:100px}.col .row:nth-of-type(3){padding-top:330px}.col .row:nth-of-type(4){padding-top:460px}
   .row h4{font-size:25px}
   .wcard h3,.feat h3,.steps .st h3,.price-card__name,.case h3{font-size:25px}
   .info{position:relative;right:auto;top:auto;margin-top:22px}
   .tip{right:auto;left:20px;bottom:auto}
-  .pop{position:relative;right:auto;top:auto;display:block;width:180px;margin:24px 0 0 -10px}
+  .pop{position:absolute;right:auto;top:auto;display:block;width:180px;margin:24px 0 0 -10px}
+  /* у 3-го и 4-го пунктов картинка над плашкой, чтобы блок не рос */
+  .col .row:nth-of-type(3) .pop{top:306px;margin-top:0;translate:0 -100%}.col .row:nth-of-type(4) .pop{top:436px;margin-top:0;translate:0 -100%}
 }
 @media (max-width:1199px){:root{--gap:120px}h1{font-size:40px;letter-spacing:-2.5px}h2{font-size:38px;letter-spacing:-2px}.stat b{font-size:52px}.share-top b{font-size:96px;letter-spacing:-5px}.gauges{grid-template-columns:repeat(2,1fr)}.fs-num{font-size:32px}.stages{gap:12px}.stage{padding:20px 14px}
   .compare{grid-template-columns:1fr;grid-template-rows:auto;row-gap:20px}
   .col{grid-row:auto;display:block}
   .row{min-height:0}
-  .row.hv .pop{opacity:1;transform:rotate(4deg)}
+  .row.hv .pop{opacity:1;transform:rotate(var(--r))}
   .stats{grid-template-columns:1fr 1fr;padding-top:0}
   .stat{text-align:left;padding:48px 40px 48px 0;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
   .stat:nth-child(2n){border-right:0;padding-left:40px}
