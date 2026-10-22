@@ -896,16 +896,19 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0}
 }
 
 /* ===== Уведомление о cookie (как T886 в Tilda) ===== */
-/* z-index выше кнопки чата Jivo, чтобы она не закрывала «OK» */
-.cookie{position:fixed;right:40px;bottom:30px;z-index:2147483647;display:flex;align-items:center;width:500px;max-width:calc(100% - 40px);padding:15px 25px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.3)}
+/* z-index выше кнопки чата Jivo, чтобы она не закрывала кнопки */
+.cookie{position:fixed;right:40px;bottom:30px;z-index:2147483647;display:flex;align-items:center;width:620px;max-width:calc(100% - 40px);padding:15px 25px;background:#fff;box-shadow:0 0 10px rgba(0,0,0,.3)}
 .cookie[hidden]{display:none}
 .cookie p{padding-right:10px;font-size:12px;line-height:1.55;color:var(--ink)}
 .cookie a{color:var(--red)}
 .cookie button{flex-shrink:0;margin-left:auto;padding:15px 20px;border:0;background:var(--red);color:var(--grey);font:inherit;font-size:17px;font-weight:600;line-height:1.55;letter-spacing:-1px;cursor:pointer;transition:background-color .2s ease-in-out}
 .cookie button:hover{background:var(--red-hover)}
+.cookie-btns{display:flex;gap:8px;flex-shrink:0;margin-left:auto}
+.cookie .cookie-no{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px #0000002e}
+.cookie .cookie-no:hover{background:#f2f2f2}
 @media (max-width:980px){.cookie{right:0;bottom:0;width:100%;max-width:none}}
 @media (max-width:959px){.cookie button{padding:10px 20px;font-size:16px}}
-@media (max-width:639px){.cookie p{line-height:1.45}}
+@media (max-width:639px){.cookie{flex-wrap:wrap}.cookie p{line-height:1.45;padding:0 0 12px}.cookie-btns{width:100%}.cookie-btns button{flex:1}}
 .copy{background:#000;color:#666;font-size:13px;text-align:center;padding:20px}
 
 @keyframes dash{to{stroke-dashoffset:-16}}
@@ -1482,10 +1485,10 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0}
   </div>
 </div></footer>
 
-<!-- Уведомление о cookie: закрывается кнопкой OK, выбор запоминается в браузере -->
+<!-- Уведомление о cookie: кнопки «Принять» / «Отклонить», выбор запоминается в браузере -->
 <div class="cookie" id="cookie" hidden>
   <p>Мы используем файлы cookie для корректной работы сайта, сохранения ваших настроек и анализа посещаемости. Подробнее — в <a href="/policy" target="_blank" rel="noopener">Политике обработки персональных данных</a></p>
-  <button type="button">OK</button>
+  <div class="cookie-btns"><button type="button" class="cookie-yes">Принять</button><button type="button" class="cookie-no">Отклонить</button></div>
 </div>
 
 </div>
@@ -1852,13 +1855,21 @@ document.querySelectorAll(".fu,.zi").forEach((el) => io.observe(el));
 
 /* Уведомление о cookie */
 (() => {
-  const box = document.getElementById("cookie"), key = "cookie_ok";
-  try { if (localStorage.getItem(key)) return; } catch (e) {}
+  const box = document.getElementById("cookie"), key = "cookie_consent";
+  /* Аналитику (Яндекс Метрику и т.п.) подключать здесь — она запустится только после «Принять» */
+  const onAccept = () => {};
+  let saved = null;
+  try { saved = localStorage.getItem(key); } catch (e) {}
+  if (saved === "yes") return onAccept();
+  if (saved === "no") return;
   box.hidden = false;
-  box.querySelector("button").onclick = () => {
+  const choose = (v) => {
     box.hidden = true;
-    try { localStorage.setItem(key, Math.floor(Date.now() / 1000)); } catch (e) {}
+    try { localStorage.setItem(key, v); } catch (e) {}
+    if (v === "yes") onAccept();
   };
+  box.querySelector(".cookie-yes").onclick = () => choose("yes");
+  box.querySelector(".cookie-no").onclick = () => choose("no");
 })();
 
 /* Форма (демо — без отправки на сервер); сейчас закомментирована в разметке */
