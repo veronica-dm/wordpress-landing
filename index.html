@@ -921,7 +921,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0}
   .show-stage{padding-left:60px;padding-right:60px}
   /* «Как бывает / Как работаем» — лесенка из 4 колонок */
   .compare{grid-template-rows:auto}
-  .col{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto auto;align-items:stretch;align-content:start;padding:30px}
+  .col{grid-row:auto;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:auto 1fr;align-items:stretch;padding:30px}
   .col > h3{grid-column:1/-1;font-size:52px;border-bottom:0;padding-bottom:48px}
   .row{min-height:640px;border-bottom:0;border-left:1px solid #ffffff2e;padding:0 20px}
   .col.light .row{border-left-color:#0000001f}
@@ -1121,7 +1121,7 @@ footer{background:var(--ink);color:var(--grey);padding:100px 0}
         <button class="info" aria-label="Подробнее про аналитику" aria-expanded="false">i</button>
         <div class="tip" role="tooltip">Подключаем Метрику и цели, настраиваем ключевые события и отслеживание заявок. Это позволяет понять, откуда приходят клиенты, какие страницы работают лучше и где теряются обращения.</div>
         <img class="pop" src="assets/img/how-1.webp" alt="Отчёт Яндекс.Метрики с целями и источниками заявок" loading="lazy"></div>
-      <div class="row hv"><span class="tag blk">Чат-боты</span><h4>Подключаем чат-ботов</h4>
+      <div class="row hv"><span class="tag blk">Чат-боты</span><h4>Подключаем <span style="white-space:nowrap">чат-ботов</span></h4>
         <button class="info" aria-label="Подробнее про чат-ботов" aria-expanded="false">i</button>
         <div class="tip" role="tooltip">Чат-боты помогают быстро обработать обращение, собрать контакты, ответить на типовые вопросы и направить клиента в нужный сценарий. Это ускоряет коммуникацию и снижает потери заявок.</div>
         <img class="pop" src="assets/img/how-2.webp" alt="Чат-бот принимает обращение клиента" loading="lazy"></div>
