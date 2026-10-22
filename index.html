@@ -339,6 +339,7 @@ nav.scrolled .btn-swap:hover{background:var(--red-2)}
 .row.tip-on .tip{opacity:1;pointer-events:auto;transform:none}
 .pop{position:absolute;right:-5px;top:12px;width:160px;pointer-events:none;opacity:0;transform:rotate(4deg) scale(.92);transition:opacity .35s var(--ease),transform .45s var(--ease);z-index:5;box-shadow:0 10px 25px #0003}
 .row.hov .pop{opacity:1;transform:rotate(4deg)}
+@media (min-width:1200px) and (max-width:1899px){.pop{transform:scale(.92)}.row.hov .pop{transform:none}}
 
 /* ===== 3. Цифры ===== */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #b5b5b5;padding-top:86px}
